@@ -1,0 +1,21 @@
+{
+    "name": "uno_bot",
+    "version": "0.0.0",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "dev": "replikit dev",
+        "build": "replikit build"
+    },
+    "workspaces": [
+        "modules/*"
+    ],
+    "dependencies": {
+        "@replikit/core": "^0.14.0",
+        "@replikit/telegram": "^0.14.0"
+    },
+    "devDependencies": {
+        "@types/node": "^14.0.27",
+        "replikit": "^0.14.0"
+    }
+}
