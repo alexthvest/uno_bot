@@ -1,6 +1,6 @@
 import { RepositoryBase } from "@uno_bot/main"
-import { Game } from "@uno_bot/main/typings"
+import { GameInfo } from "@uno_bot/main/typings"
 
-export class GameRepository extends RepositoryBase<Game> {
+export class GameRepository extends RepositoryBase<GameInfo> {
 
 }

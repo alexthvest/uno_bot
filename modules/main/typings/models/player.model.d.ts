@@ -1,7 +1,7 @@
 import { AccountInfo } from "@replikit/core/typings"
-import { Game } from "@uno_bot/main/typings"
+import { GameInfo } from "@uno_bot/main/typings"
 
 export interface PlayerInfo extends AccountInfo {
-  game: Game
+  game: GameInfo
   bot?: boolean
 }

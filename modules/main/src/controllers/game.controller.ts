@@ -1,18 +1,19 @@
 import { OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
-import { GameRepository, PlayerRepository } from "@uno_bot/main"
+import { RepositoryBase } from "@uno_bot/main"
+import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
 export class GameController {
-  private readonly _gameRepository: GameRepository
-  private readonly _playerRepository: PlayerRepository
+  private readonly _gameRepository: RepositoryBase<GameInfo>
+  private readonly _playerRepository: RepositoryBase<PlayerInfo>
 
   /**
    *
    * @param gameRepository
    * @param playerRepository
    */
-  constructor(gameRepository: GameRepository, playerRepository: PlayerRepository) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, playerRepository: RepositoryBase<PlayerInfo>) {
     this._gameRepository = gameRepository
     this._playerRepository = playerRepository
   }
@@ -54,7 +55,12 @@ export class GameController {
     if (game.ownerId !== senderId)
       return fromText("NOT_GAME_OWNER")
 
+    const players = this._playerRepository.all.filter(player => player.game.id === channelId)
     this._gameRepository.remove(channelId)
+
+    for (const player of players)
+      this._playerRepository.remove(player.id)
+
     return fromText("GAME_CLOSED")
   }
 
