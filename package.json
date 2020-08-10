@@ -12,7 +12,8 @@
     ],
     "dependencies": {
         "@replikit/core": "^0.14.0",
-        "@replikit/telegram": "^0.14.0"
+        "@replikit/telegram": "^0.14.0",
+        "moment": "^2.27.0"
     },
     "devDependencies": {
         "@types/node": "^14.0.27",
