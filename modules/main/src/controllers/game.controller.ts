@@ -1,17 +1,20 @@
 import { OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
-import { GameRepository } from "@uno_bot/main"
+import { GameRepository, PlayerRepository } from "@uno_bot/main"
 import moment from "moment"
 
 export class GameController {
   private readonly _gameRepository: GameRepository
+  private readonly _playerRepository: PlayerRepository
 
   /**
    *
    * @param gameRepository
+   * @param playerRepository
    */
-  constructor(gameRepository: GameRepository) {
+  constructor(gameRepository: GameRepository, playerRepository: PlayerRepository) {
     this._gameRepository = gameRepository
+    this._playerRepository = playerRepository
   }
 
   /**
@@ -53,5 +56,30 @@ export class GameController {
 
     this._gameRepository.remove(channelId)
     return fromText("GAME_CLOSED")
+  }
+
+  /**
+   * Kicks player from game
+   * @param channelId
+   * @param senderId
+   * @param accountId
+   */
+  public kick(channelId: number, senderId: number, accountId: number): OutMessage {
+    const game = this._gameRepository.get(channelId)
+
+    if (game === undefined)
+      return fromText("GAME_NOT_FOUND")
+
+    if (game.ownerId !== senderId)
+      return fromText("NOT_GAME_OWNER")
+
+    if (accountId === undefined)
+      return fromText("NO_KICK_TARGET")
+
+    if (!this._playerRepository.contains(accountId))
+      return fromText("PLAYER_NOT_IN_GAME")
+
+    this._playerRepository.remove(accountId)
+    return fromText("PLAYER_KICKED")
   }
 }

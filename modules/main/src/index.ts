@@ -6,5 +6,6 @@ export * from "./controllers/game.controller"
 
 import "./commands/create.command"
 import "./commands/close.command"
+import "./commands/kick.command"
 
 export * from "./startup"
