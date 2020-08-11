@@ -1,3 +1,6 @@
+import "./extensions/String.extensions"
+import "./extensions/Array.extensions"
+
 export * from "./repositories/base.repository"
 export * from "./repositories/game.repository"
 export * from "./repositories/player.repository"

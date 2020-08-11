@@ -52,6 +52,7 @@ export class PlayerController {
       return fromText("PLAYER_NOT_IN_GAME")
 
     // TODO: Add turn switch, game ending conditions
+    // TODO: Cards returns to deck
 
     this._playerRepository.remove(accountId)
     return fromText("PLAYER_LEFT_GAME")
