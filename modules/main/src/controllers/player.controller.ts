@@ -1,20 +1,17 @@
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { RepositoryBase } from "@uno_bot/main"
-import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
+import { GameInfo } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
-  private readonly _playerRepository: RepositoryBase<PlayerInfo>
 
   /**
    *
    * @param gameRepository
-   * @param playerRepository
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, playerRepository: RepositoryBase<PlayerInfo>) {
+  constructor(gameRepository: RepositoryBase<GameInfo>) {
     this._gameRepository = gameRepository
-    this._playerRepository = playerRepository
   }
 
   /**
@@ -28,12 +25,16 @@ export class PlayerController {
     if (game === undefined)
       return fromText("GAME_NOT_FOUND")
 
-    if (this._playerRepository.contains(account.id))
+    if (this._gameRepository.has(game => game.players.contains(account.id)))
       return fromText("PLAYER_ALREADY_IN_GAME")
 
     // TODO: Add deck empty check
 
-    this._playerRepository.add({ ...account, game })
+    game.players.add({
+      ...account, game,
+      cards: []
+    })
+
     return fromText("PLAYER_JOINED")
   }
 
@@ -48,13 +49,13 @@ export class PlayerController {
     if (game === undefined)
       return fromText("GAME_NOT_FOUND")
 
-    if (!this._playerRepository.contains(accountId))
+    if (!game.players.contains(accountId))
       return fromText("PLAYER_NOT_IN_GAME")
 
     // TODO: Add turn switch, game ending conditions
     // TODO: Cards returns to deck
 
-    this._playerRepository.remove(accountId)
+    game.players.remove(accountId)
     return fromText("PLAYER_LEFT_GAME")
   }
 }

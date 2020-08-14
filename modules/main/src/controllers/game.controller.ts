@@ -1,21 +1,18 @@
 import { OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
-import { RepositoryBase } from "@uno_bot/main"
-import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
+import { PlayerRepository, RepositoryBase } from "@uno_bot/main"
+import { GameInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
 export class GameController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
-  private readonly _playerRepository: RepositoryBase<PlayerInfo>
 
   /**
    *
    * @param gameRepository
-   * @param playerRepository
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, playerRepository: RepositoryBase<PlayerInfo>) {
+  constructor(gameRepository: RepositoryBase<GameInfo>) {
     this._gameRepository = gameRepository
-    this._playerRepository = playerRepository
   }
 
   /**
@@ -35,6 +32,7 @@ export class GameController {
     this._gameRepository.remove(channelId)
     this._gameRepository.add({
       id: channelId, ownerId,
+      players: new PlayerRepository(),
       createdAt: moment()
     })
 
@@ -55,12 +53,7 @@ export class GameController {
     if (game.ownerId !== senderId)
       return fromText("NOT_GAME_OWNER")
 
-    const players = this._playerRepository.all.filter(player => player.game.id === channelId)
     this._gameRepository.remove(channelId)
-
-    for (const player of players)
-      this._playerRepository.remove(player.id)
-
     return fromText("GAME_CLOSED")
   }
 
@@ -70,7 +63,7 @@ export class GameController {
    * @param senderId
    * @param accountId
    */
-  public kick(channelId: number, senderId: number, accountId: number): OutMessage {
+  public kick(channelId: number, senderId: number, accountId: number | undefined): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -82,10 +75,10 @@ export class GameController {
     if (accountId === undefined)
       return fromText("NO_KICK_TARGET")
 
-    if (!this._playerRepository.contains(accountId))
+    if (!game.players.contains(accountId))
       return fromText("PLAYER_NOT_IN_GAME")
 
-    this._playerRepository.remove(accountId)
+    game.players.remove(accountId)
     return fromText("PLAYER_KICKED")
   }
 }

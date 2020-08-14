@@ -51,4 +51,12 @@ export abstract class RepositoryBase<T extends HasId> {
   public contains(id: number): boolean {
     return this._items.some(game => game.id === id)
   }
+
+  /**
+   * Checks if repository contains item
+   * @param predicate
+   */
+  public has(predicate: (item: T, index: number, array: T[]) => boolean): boolean {
+    return this._items.some(predicate)
+  }
 }

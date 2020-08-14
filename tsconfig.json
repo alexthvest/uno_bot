@@ -4,6 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "baseUrl": "modules",
+    "strict": true,
     "esModuleInterop": true,
     "paths": {
       "@uno_bot/*": [
