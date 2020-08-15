@@ -4,6 +4,8 @@ import "./extensions/Array.extensions"
 export * from "./cards/types"
 export * from "./cards/stickers"
 
+export * from "./managers/event.manager"
+
 export * from "./repositories/base.repository"
 export * from "./repositories/game.repository"
 export * from "./repositories/player.repository"

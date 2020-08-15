@@ -1,10 +1,8 @@
-import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
-import { PlayerController, PlayerRepository, RepositoryBase } from "@uno_bot/main"
+import { AccountInfo, OutMessage } from "@replikit/core/typings"
+import { PlayerRepository, RepositoryBase, EventManager } from "@uno_bot/main"
 import { GameInfo } from "@uno_bot/main/typings"
 import moment from "moment"
-import { platform } from "os"
-import { EventManager } from "../managers/event.manager"
 
 export class GameController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -69,36 +67,5 @@ export class GameController {
 
     this._gameRepository.remove(channelId)
     return fromText("GAME_CLOSED")
-  }
-
-  /**
-   * Kicks player from game
-   * @param channelId
-   * @param account
-   * @param target
-   */
-  public kick(channelId: number, account: AccountInfo, target: AccountInfo | undefined): OutMessage {
-    const game = this._gameRepository.get(channelId)
-
-    if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
-
-    if (game.ownerId !== account.id)
-      return fromText("NOT_GAME_OWNER")
-
-    if (target?.id === undefined)
-      return fromText("NO_KICK_TARGET")
-
-    if (!game.players.contains(target.id))
-      return fromText("PLAYER_NOT_IN_GAME")
-
-    this._eventManager.publish("player:kicked", {
-      game, player: game.players.get(target.id)!
-    })
-
-    const playerController = new PlayerController(this._gameRepository, this._eventManager)
-    playerController.leave(channelId, target.id)
-
-    return fromText("PLAYER_KICKED")
   }
 }

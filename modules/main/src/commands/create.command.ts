@@ -1,5 +1,5 @@
 import { command } from "@replikit/commands"
-import { gameRepository, GameController, eventManager } from "@uno_bot/main"
+import { gameRepository, eventManager, GameController } from "@uno_bot/main"
 
 command("create").handler(context => {
   const controller = new GameController(gameRepository, eventManager)

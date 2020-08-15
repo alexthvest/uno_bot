@@ -1,6 +1,5 @@
 import { createScope } from "@replikit/core"
-import { GameRepository } from "@uno_bot/main"
-import { EventManager } from "./managers/event.manager"
+import { GameRepository, EventManager } from "@uno_bot/main"
 
 /** @internal */
 export const logger = createScope("main")
