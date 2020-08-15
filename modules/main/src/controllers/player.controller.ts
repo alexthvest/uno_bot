@@ -2,16 +2,20 @@ import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { RepositoryBase } from "@uno_bot/main"
 import { GameInfo } from "@uno_bot/main/typings"
+import { EventManager } from "../managers/event.manager"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
+  private readonly _eventManager: EventManager
 
   /**
    *
    * @param gameRepository
+   * @param eventManager
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager) {
     this._gameRepository = gameRepository
+    this._eventManager = eventManager
   }
 
   /**
@@ -30,9 +34,13 @@ export class PlayerController {
 
     // TODO: Add deck empty check
 
-    game.players.add({
+    const player = game.players.add({
       ...account, game,
       cards: []
+    })
+
+    this._eventManager.publish("player:joined", {
+      game, player
     })
 
     return fromText("PLAYER_JOINED")
@@ -54,6 +62,10 @@ export class PlayerController {
 
     // TODO: Add turn switch, game ending conditions
     // TODO: Cards returns to deck
+
+    this._eventManager.publish("player:left", {
+      game, player: game.players.get(accountId)!
+    })
 
     game.players.remove(accountId)
     return fromText("PLAYER_LEFT_GAME")

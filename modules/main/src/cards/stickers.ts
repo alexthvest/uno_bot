@@ -1,7 +1,5 @@
 import { CardColor, CardOptionType, CardSpecialType, CardType } from "@uno_bot/main"
 
-export * from "./types"
-
 export const ColorEmoji = {
   [CardColor.Red]: "🟥",
   [CardColor.Green]: "🟩",

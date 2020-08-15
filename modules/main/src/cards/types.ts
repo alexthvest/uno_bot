@@ -1,4 +1,4 @@
-export declare enum CardColor {
+export enum CardColor {
   Red = "Red",
   Green = "Green",
   Blue = "Blue",
@@ -7,7 +7,7 @@ export declare enum CardColor {
   Option = "Option"
 }
 
-export declare enum CardType {
+export enum CardType {
   Zero = "zero",
   One = "one",
   Two = "two",
@@ -23,12 +23,12 @@ export declare enum CardType {
   Skip = "skip"
 }
 
-export declare enum CardSpecialType {
+export enum CardSpecialType {
   DrawFour = "drawFour",
   Color = "color"
 }
 
-export declare enum CardOptionType {
+export enum CardOptionType {
   Draw = "draw",
   Pass = "pass"
 }

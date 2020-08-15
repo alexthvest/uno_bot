@@ -1,7 +1,8 @@
 import "./extensions/String.extensions"
 import "./extensions/Array.extensions"
 
-export * from "./cards"
+export * from "./cards/types"
+export * from "./cards/stickers"
 
 export * from "./repositories/base.repository"
 export * from "./repositories/game.repository"

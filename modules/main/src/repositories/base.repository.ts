@@ -28,8 +28,9 @@ export abstract class RepositoryBase<T extends HasId> {
    * Adds new item to repository
    * @param item
    */
-  public add(item: T): void {
+  public add(item: T): T {
     this._items.push(item)
+    return item
   }
 
   /**
