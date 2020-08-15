@@ -1,6 +1,6 @@
 import { fromText } from "@replikit/messages"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
-import { PlayerRepository, RepositoryBase, EventManager } from "@uno_bot/main"
+import { PlayerRepository, RepositoryBase, EventManager, DeckManager } from "@uno_bot/main"
 import { GameInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
@@ -34,8 +34,10 @@ export class GameController {
 
     this._gameRepository.remove(channelId)
     this._gameRepository.add({
-      id: channelId, ownerId: account.id,
+      id: channelId,
+      ownerId: account.id,
       players: new PlayerRepository(),
+      deck: new DeckManager(),
       createdAt: moment()
     })
 
