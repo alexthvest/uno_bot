@@ -8,7 +8,7 @@ export const ColorEmoji = {
   [CardColor.Black]: "⬛"
 }
 
-export const CardStickers = {
+export const CardStickers: { [key: string]: { [key: string]: string[] } } = {
   [CardColor.Red]: {
     [CardType.Zero]: [
       "BQADBAADEQIAAl9XmQABiUfr1hz-zT8C",
@@ -236,7 +236,7 @@ export const CardStickers = {
     ]
   },
   [CardColor.Option]: {
-    [CardOptionType.Draw]: "BQADBAAD-AIAAl9XmQABxEjEcFM-VHIC",
-    [CardOptionType.Pass]: "BQADBAAD-gIAAl9XmQABcEkAAbaZ4SicAg"
+    [CardOptionType.Draw]: ["BQADBAAD-AIAAl9XmQABxEjEcFM-VHIC"],
+    [CardOptionType.Pass]: ["BQADBAAD-gIAAl9XmQABcEkAAbaZ4SicAg"]
   }
 }

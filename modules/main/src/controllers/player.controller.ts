@@ -1,11 +1,14 @@
-import { fromText } from "@replikit/messages"
+import { resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
-import { RepositoryBase, EventManager } from "@uno_bot/main"
+import { fromText } from "@replikit/messages"
+import { TelegramController } from "@replikit/telegram"
+import { EventManager, RepositoryBase } from "@uno_bot/main"
 import { GameInfo } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
+  private readonly _controller: TelegramController
 
   /**
    *
@@ -15,6 +18,7 @@ export class PlayerController {
   constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
+    this._controller = resolveController("tg")
   }
 
   /**
@@ -59,11 +63,18 @@ export class PlayerController {
     if (!game.players.contains(accountId))
       return fromText("PLAYER_NOT_IN_GAME")
 
-    // TODO: Add turn switch, game ending conditions
-    // TODO: Cards returns to deck
+    const player = game.players.get(accountId)!
+    game.deck.discard(...player.cards)
+
+    // TODO: Add turn switch
+
+    if (game.players.length - 1 < 2) {
+      this._gameRepository.remove(channelId)
+      this._controller.sendMessage(channelId, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
+    }
 
     this._eventManager.publish("player:left", {
-      game, player: game.players.get(accountId)!
+      game, player
     })
 
     game.players.remove(accountId)

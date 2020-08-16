@@ -1,6 +1,7 @@
-import { fromText } from "@replikit/messages"
+import { AttachmentType } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
-import { PlayerRepository, RepositoryBase, EventManager, DeckManager } from "@uno_bot/main"
+import { fromText, MessageBuilder } from "@replikit/messages"
+import { CardStickers, DeckManager, EventManager, PlayerRepository, RepositoryBase } from "@uno_bot/main"
 import { GameInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
@@ -69,5 +70,43 @@ export class GameController {
 
     this._gameRepository.remove(channelId)
     return fromText("GAME_CLOSED")
+  }
+
+  /**
+   * Starts the game
+   * @param channelId
+   * @param account
+   */
+  public start(channelId: number, account: AccountInfo): OutMessage {
+    const game = this._gameRepository.get(channelId)
+
+    if (game === undefined)
+      return fromText("GAME_NOT_FOUND")
+
+    if (game.ownerId !== account.id)
+      return fromText("NOT_GAME_OWNER")
+
+    if (game.started)
+      return fromText("GAME_ALREADY_STARTED")
+
+    if (game.players.length < 1) // TODO: Change to 2 for production
+      return fromText("NOT_ENOUGH_PLAYERS")
+
+    const card = game.deck.drawFirst()
+    const stickerId = CardStickers[card.color][card.types.default!][0]
+
+    // TODO: Add card play
+
+    this._eventManager.publish("game:started", {
+      game, card, sender: account
+    })
+
+    return new MessageBuilder()
+      .addText("GAME_STARTED")
+      .addAttachment({
+        id: stickerId,
+        type: AttachmentType.Sticker,
+        controllerName: "tg"
+      }).build()
   }
 }

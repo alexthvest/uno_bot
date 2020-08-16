@@ -21,5 +21,6 @@ import "./commands/close.command"
 import "./commands/kick.command"
 import "./commands/join.command"
 import "./commands/leave.command"
+import "./commands/start.command"
 
 export * from "./startup"

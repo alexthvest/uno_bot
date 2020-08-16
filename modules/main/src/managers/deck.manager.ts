@@ -39,10 +39,10 @@ export class DeckManager {
   }
 
   /**
-   * Discards card to discard deck
+   * Discards cards to discard deck
    */
-  public discard(card: Card): void {
-    this._discard.push(card)
+  public discard(...cards: Card[]): void {
+    cards.forEach(card => this._discard.push(card))
   }
 
   /**
@@ -63,5 +63,17 @@ export class DeckManager {
    */
   public drawFew(count: number): Card[] {
     return Array(count).fill(1).map(() => this.draw())
+  }
+
+  /**
+   * Draws first card
+   */
+  public drawFirst(): Card {
+    let card: Card
+
+    do { card = this.draw() }
+    while (card.types.special)
+
+    return card
   }
 }
