@@ -1,8 +1,16 @@
 import { AttachmentType } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
-import { CardStickers, DeckManager, EventManager, PlayerRepository, RepositoryBase } from "@uno_bot/main"
-import { GameInfo } from "@uno_bot/main/typings"
+import {
+  CardStickers,
+  DeckManager,
+  EventManager,
+  PlayerController,
+  PlayerRepository,
+  RepositoryBase,
+  TurnManager
+} from "@uno_bot/main"
+import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
 export class GameController {
@@ -33,12 +41,14 @@ export class GameController {
     if (game && game.started)
       return fromText("GAME_ALREADY_STARTED")
 
+    const players = new PlayerRepository()
     this._gameRepository.remove(channelId)
+
     this._gameRepository.add({
       id: channelId,
-      ownerId: account.id,
-      players: new PlayerRepository(),
+      ownerId: account.id, players,
       deck: new DeckManager(),
+      turns: new TurnManager(players),
       createdAt: moment()
     })
 
@@ -77,7 +87,7 @@ export class GameController {
    * @param channelId
    * @param account
    */
-  public start(channelId: number, account: AccountInfo): OutMessage {
+  public async start(channelId: number, account: AccountInfo): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -94,8 +104,10 @@ export class GameController {
 
     const card = game.deck.drawFirst()
     const stickerId = CardStickers[card.color][card.types.default!][0]
+    const gameStarter: PlayerInfo = { id: -1, game, cards: [card] }
 
-    // TODO: Add card play
+    const controller = new PlayerController(this._gameRepository, this._eventManager)
+    await controller.play(gameStarter, card)
 
     this._eventManager.publish("game:started", {
       game, card, sender: account

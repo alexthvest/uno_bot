@@ -3,7 +3,7 @@ import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
 import { EventManager, RepositoryBase } from "@uno_bot/main"
-import { GameInfo } from "@uno_bot/main/typings"
+import { Card, GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -54,7 +54,7 @@ export class PlayerController {
    * @param channelId
    * @param accountId
    */
-  public leave(channelId: number, accountId: number): OutMessage {
+  public async leave(channelId: number, accountId: number): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -70,7 +70,7 @@ export class PlayerController {
 
     if (game.players.length - 1 < 2) {
       this._gameRepository.remove(channelId)
-      this._controller.sendMessage(channelId, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
+      await this._controller.sendMessage(channelId, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
     }
 
     this._eventManager.publish("player:left", {
@@ -87,7 +87,7 @@ export class PlayerController {
    * @param account
    * @param target
    */
-  public kick(channelId: number, account: AccountInfo, target: AccountInfo | undefined): OutMessage {
+  public async kick(channelId: number, account: AccountInfo, target: AccountInfo | undefined): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -106,7 +106,16 @@ export class PlayerController {
       game, player: game.players.get(target.id)!
     })
 
-    this.leave(channelId, target.id)
+    await this.leave(channelId, target.id)
     return fromText("PLAYER_KICKED")
+  }
+
+  /**
+   * Plays card
+   * @param player
+   * @param card
+   */
+  public async play(player: PlayerInfo, card: Card): Promise<OutMessage> {
+    throw new Error("Not implemented")
   }
 }
