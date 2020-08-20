@@ -19,8 +19,6 @@ export class PlayerController {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._controller = resolveController("tg")
-
-    this._eventManager.subscribe("player:left", this.onPlayerLeft.bind(this))
   }
 
   /**
@@ -40,8 +38,8 @@ export class PlayerController {
     // TODO: Add deck empty check
 
     const player = game.players.add({
-      ...account, game,
-      cards: []
+      ...account,
+      cards: game.deck.drawFew(7)
     })
 
     this._eventManager.publish("player:joined", {
@@ -66,9 +64,11 @@ export class PlayerController {
       return fromText("PLAYER_NOT_IN_GAME")
 
     const player = game.players.get(accountId)!
-    game.deck.discard(...player.cards)
 
+    game.deck.discard(...player.cards)
     game.players.remove(accountId)
+
+    this._eventManager.subscribeOnce("player:left", this.onPlayerLeft.bind(this))
     this._eventManager.publish("player:left", { game, player })
 
     return fromText("PLAYER_LEFT_GAME")
@@ -81,9 +81,12 @@ export class PlayerController {
   private onPlayerLeft(context: PlayerLeftContext): Promise<unknown> {
     const { game } = context
 
+    if (!game.started)
+      return Promise.resolve()
+
     if (game.players.length < 2) {
       this._gameRepository.remove(game.id)
-      return this._controller.sendMessage(game.id, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
+      return this._controller.sendMessage(game.id, fromText("NOT_ENOUGH_PLAYER_TO_CONTINUE_GAME"))
     }
 
     game.turns.next()

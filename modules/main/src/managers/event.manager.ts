@@ -19,6 +19,16 @@ export class EventManager {
    * @param event
    * @param handler
    */
+  subscribeOnce<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
+    this._emitter.once(event, handler)
+    return this
+  }
+
+  /**
+   *
+   * @param event
+   * @param handler
+   */
   unsubscribe<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
     this._emitter.removeListener(event, handler)
     return this

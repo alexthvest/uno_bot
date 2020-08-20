@@ -1,6 +1,3 @@
-import "./extensions/String.extensions"
-import "./extensions/Array.extensions"
-
 export * from "./utils/array.utils"
 
 export * from "./cards/types"
@@ -10,6 +7,10 @@ export * from "./managers/event.manager"
 export * from "./managers/deck.manager"
 export * from "./managers/inline.manager"
 export * from "./managers/turn.manager"
+
+import "./extensions/String.extensions"
+import "./extensions/Array.extensions"
+import "./extensions/InlineManager.extensions"
 
 export * from "./repositories/base.repository"
 export * from "./repositories/game.repository"

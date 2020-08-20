@@ -104,7 +104,7 @@ export class GameController {
 
     const card = game.deck.drawFirst()
     const stickerId = CardStickers[card.color][card.types.default!][0]
-    const gameStarter: PlayerInfo = { id: -1, game, cards: [card] }
+    const gameStarter: PlayerInfo = { id: -1, cards: [card] }
 
     const controller = new PlayerController(this._gameRepository, this._eventManager)
     await controller.play(gameStarter, card)
