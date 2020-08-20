@@ -8,6 +8,7 @@ export * from "./cards/stickers"
 
 export * from "./managers/event.manager"
 export * from "./managers/deck.manager"
+export * from "./managers/inline.manager"
 export * from "./managers/turn.manager"
 
 export * from "./repositories/base.repository"

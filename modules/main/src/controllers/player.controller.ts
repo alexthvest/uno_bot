@@ -3,7 +3,7 @@ import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
 import { EventManager, RepositoryBase } from "@uno_bot/main"
-import { Card, GameInfo, PlayerInfo } from "@uno_bot/main/typings"
+import { Card, GameInfo, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -19,6 +19,8 @@ export class PlayerController {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._controller = resolveController("tg")
+
+    this._eventManager.subscribe("player:left", this.onPlayerLeft.bind(this))
   }
 
   /**
@@ -66,19 +68,26 @@ export class PlayerController {
     const player = game.players.get(accountId)!
     game.deck.discard(...player.cards)
 
-    // TODO: Add turn switch
+    game.players.remove(accountId)
+    this._eventManager.publish("player:left", { game, player })
 
-    if (game.players.length - 1 < 2) {
-      this._gameRepository.remove(channelId)
-      await this._controller.sendMessage(channelId, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
+    return fromText("PLAYER_LEFT_GAME")
+  }
+
+  /**
+   * Handles player left event
+   * @param context
+   */
+  private onPlayerLeft(context: PlayerLeftContext): Promise<unknown> {
+    const { game } = context
+
+    if (game.players.length < 2) {
+      this._gameRepository.remove(game.id)
+      return this._controller.sendMessage(game.id, fromText("NOT_ENOUGH_PLAYER_TO_START_GAME"))
     }
 
-    this._eventManager.publish("player:left", {
-      game, player
-    })
-
-    game.players.remove(accountId)
-    return fromText("PLAYER_LEFT_GAME")
+    game.turns.next()
+    return this._controller.sendMessage(game.id, fromText("NEXT_PLAYER_TURN"))
   }
 
   /**
@@ -102,11 +111,12 @@ export class PlayerController {
     if (!game.players.contains(target.id))
       return fromText("PLAYER_NOT_IN_GAME")
 
+    await this.leave(channelId, target.id)
+
     this._eventManager.publish("player:kicked", {
       game, player: game.players.get(target.id)!
     })
 
-    await this.leave(channelId, target.id)
     return fromText("PLAYER_KICKED")
   }
 

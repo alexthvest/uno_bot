@@ -74,11 +74,11 @@ export class GameController {
     if (game.ownerId !== account.id)
       return fromText("NOT_GAME_OWNER")
 
+    this._gameRepository.remove(channelId)
     this._eventManager.publish("game:closed", {
       game, sender: account
     })
 
-    this._gameRepository.remove(channelId)
     return fromText("GAME_CLOSED")
   }
 
