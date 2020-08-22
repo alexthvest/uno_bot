@@ -19,7 +19,7 @@ router.of("inline-query:received").use(async context => {
   const player = game?.players.get(context.account.id)!
 
   if (game === undefined)
-    return inlineManager.inlineGameNotFoundWithContext(context)
+    return inlineManager.inlineNotInGameWithContext(context)
 
   if (!game.started)
     return inlineManager.inlineGameNotStartedWithContext(context)
@@ -27,7 +27,7 @@ router.of("inline-query:received").use(async context => {
   const card = await inlineManager.inlineCardsWithContext(context, game, player)
 
   const playerController = new PlayerController(gameRepository, eventManager)
-  const message = await playerController.play(player, card)
+  const message = await playerController.play(game, player, card)
 
   return resolveController("tg").sendMessage(game.id, message)
 })

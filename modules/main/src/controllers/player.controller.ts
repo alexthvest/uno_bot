@@ -125,10 +125,17 @@ export class PlayerController {
 
   /**
    * Plays card
+   * @param game
    * @param player
    * @param card
    */
-  public async play(player: PlayerInfo, card: Card): Promise<OutMessage> {
-    throw new Error("Not implemented")
+  public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage> {
+    player.cards.remove(card)
+
+    game.deck.discard(card)
+    game.lastCard = card
+
+    const nextPlayer = game.turns.next()
+    return fromText(`NEXT_PLAYER_TURN ${nextPlayer.firstName}`)
   }
 }

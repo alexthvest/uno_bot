@@ -9,7 +9,7 @@ declare module "../managers/inline.manager" {
      * Sends inline menu with game not found message
      * @param context
      */
-    inlineGameNotFoundWithContext(context: InlineQueryReceivedContext): Promise<string>
+    inlineNotInGameWithContext(context: InlineQueryReceivedContext): Promise<string>
 
     /**
      * Sends inline menu with game not started message
@@ -27,12 +27,12 @@ declare module "../managers/inline.manager" {
   }
 }
 
-InlineManager.prototype.inlineGameNotFoundWithContext = function (context) {
+InlineManager.prototype.inlineNotInGameWithContext = function (context) {
   return this.inlineWithContext(context, [{
     id: "info",
     data: "info",
     article: {
-      title: "GAME_NOT_FOUND",
+      title: "NOT_IN_GAME",
       description: "DESCRIPTION"
     },
     message: {

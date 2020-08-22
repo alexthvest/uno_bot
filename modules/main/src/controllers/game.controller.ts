@@ -107,8 +107,9 @@ export class GameController {
     const gameStarter: PlayerInfo = { id: -1, cards: [card] }
 
     const controller = new PlayerController(this._gameRepository, this._eventManager)
-    await controller.play(gameStarter, card)
+    await controller.play(game, gameStarter, card)
 
+    game.started = true
     this._eventManager.publish("game:started", {
       game, card, sender: account
     })

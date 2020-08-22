@@ -1,11 +1,11 @@
 import { InlineQueryChosenContext, InlineQueryReceivedContext, Router } from "@replikit/router"
 import { NextHandler } from "@replikit/router/typings"
-import { InlineEvent, InlineQueryDataResult } from "@uno_bot/main/typings"
+import { InlineEvent, InlineEventOptions, InlineQueryDataResult } from "@uno_bot/main/typings"
 import { EventEmitter } from "events"
 import { v4 as uuid } from "uuid"
 
 export class InlineManager {
-  private readonly _events: InlineEvent<unknown>[] = []
+  private readonly _storage: InlineEvent<unknown>[] = []
   private readonly _emitter: EventEmitter = new EventEmitter()
 
   /**
@@ -20,17 +20,15 @@ export class InlineManager {
   /**
    * Sends inline menu and returns result
    * @param accountId
-   * @param results
+   * @param options
    */
-  public inline<T>(accountId: number, results: InlineQueryDataResult<T>[]): Promise<T> {
+  public inline<T>(accountId: number, options: InlineEventOptions<T>): Promise<T> {
     return new Promise(resolve => {
-      const event: InlineEvent<T> = { id: uuid(), accountId, results }
-      this._events.push(event)
+      const event: InlineEvent<T> = { id: uuid(), accountId, results: options.results, once: options.once }
+      this._storage.push(event)
 
       this._emitter.once(event.id, (data: T) => {
-        const index = this._events.findIndex(e => e.id === event.id)
-        this._events.splice(index, 1)
-
+        this._storage.remove(event)
         return resolve(data)
       })
     })
@@ -42,8 +40,21 @@ export class InlineManager {
    * @param results
    */
   public async inlineWithContext<T>(context: InlineQueryReceivedContext, results: InlineQueryDataResult<T>[]): Promise<T> {
-    await context.answer({ results, cacheTime: 0 })
-    return this.inline(context.account.id, results)
+    const result = this.inline(context.account.id, { results, once: true })
+    await this.onInlineQueryReceived(context, () => {})
+
+    return result
+  }
+
+  /**
+   * Clears all events by account id
+   * @param accountId
+   */
+  public removeEvents(accountId: number): void {
+    this._storage.filter(e => e.accountId === accountId).forEach(event => {
+      this._emitter.removeAllListeners(event.id)
+      this._storage.remove(event)
+    })
   }
 
   /**
@@ -52,10 +63,16 @@ export class InlineManager {
    * @param next
    * @private
    */
-  private onInlineQueryReceived(context: InlineQueryReceivedContext, next: NextHandler): Promise<unknown> | unknown {
-    const event = this._events.find(event => event.accountId === context.account.id)
+  private onInlineQueryReceived(context: InlineQueryReceivedContext, next: NextHandler): Promise<void> | unknown {
+    const event = this._storage.find(event => event.accountId === context.account.id)
     if (event === undefined) return next()
 
+    if (event.once && event.showed) {
+      this._storage.remove(event)
+      return next()
+    }
+
+    event.showed = true
     return context.answer({ results: event.results, cacheTime: 0 })
   }
 
@@ -66,7 +83,7 @@ export class InlineManager {
    * @private
    */
   private onInlineQueryChosen(context: InlineQueryChosenContext, next: NextHandler): Promise<unknown> | unknown {
-    const event = this._events.find(event => event.accountId === context.account.id)
+    const event = this._storage.find(event => event.accountId === context.account.id)
     if (event === undefined) return next()
 
     const { data } = event.results.find(result => result.id === context.result.id)!
