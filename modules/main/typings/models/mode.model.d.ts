@@ -1,5 +1,5 @@
 import { OutMessage, SendedMessage } from "@replikit/core/typings"
-import { CardOptionType, CardSpecialType, CardType } from "@uno_bot/main"
+import { CardColor, CardOptionType, CardSpecialType, CardType } from "@uno_bot/main"
 import { Card, GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
 
 export interface Mode {
@@ -33,6 +33,11 @@ export interface ModeRuleContext {
    * @param results
    */
   inline<T>(results: InlineQueryDataResult<T>[]): Promise<T>
+
+  /**
+   * Sends inline menu with colors
+   */
+  inlineColors(): Promise<CardColor>
 
   /**
    * Sends message to game channel

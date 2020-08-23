@@ -2,22 +2,25 @@ import { resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
-import { EventManager, RepositoryBase } from "@uno_bot/main"
+import { EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
 import { Card, GameInfo, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
+  private readonly _modeManager: ModeManager
   private readonly _controller: TelegramController
 
   /**
    *
    * @param gameRepository
    * @param eventManager
+   * @param modeManager
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
+    this._modeManager = modeManager
     this._controller = resolveController("tg")
   }
 
@@ -129,7 +132,10 @@ export class PlayerController {
    * @param player
    * @param card
    */
-  public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage> {
+  public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage | undefined> {
+    await this._modeManager.play(game, player, card)
+    if (card.types.option) return
+
     player.cards.remove(card)
 
     game.deck.discard(card)

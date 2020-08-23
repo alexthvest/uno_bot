@@ -1,6 +1,6 @@
 import { AttachmentType } from "@replikit/core"
 import { InlineQueryReceivedContext } from "@replikit/router"
-import { CardStickers, InlineManager } from "@uno_bot/main"
+import { CardColor, CardOptionType, CardStickers, InlineManager, ModeManager } from "@uno_bot/main"
 import { Card, GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
 
 declare module "../managers/inline.manager" {
@@ -22,8 +22,15 @@ declare module "../managers/inline.manager" {
      * @param context
      * @param game
      * @param player
+     * @param optionTypes
+     * @param modeManager
      */
-    inlineCardsWithContext(context: InlineQueryReceivedContext, game: GameInfo, player: PlayerInfo): Promise<Card>
+    inlineCardsWithContext(
+      context: InlineQueryReceivedContext,
+      game: GameInfo,
+      player: PlayerInfo,
+      optionTypes: CardOptionType[],
+      modeManager: ModeManager): Promise<Card>
 
     /**
      * Sends inline menu with modes selection
@@ -63,9 +70,9 @@ InlineManager.prototype.inlineGameNotStartedWithContext = function (context) {
   }])
 }
 
-InlineManager.prototype.inlineCardsWithContext = function (context, game, player) {
+InlineManager.prototype.inlineCardsWithContext = function (context, game, player, optionTypes: CardOptionType[], modeManager) {
   const cards: InlineQueryDataResult<Card>[] = player.cards.map((card, index) => {
-    const playable = game.previousCard?.color === card.color
+    const playable = modeManager.playable(game, card)
     const stickers = CardStickers[card.color][card.types.default || card.types.special || ""]
 
     return {
@@ -77,13 +84,29 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
       },
       ...((game.turns.turn?.id !== player.id || !playable) && {
         message: {
-          text: "NOT_YOUR_TURN"
+          text: "WRONG_TURN"
         }
       })
     }
   })
 
-  return this.inlineWithContext(context, cards.sort(a => a.message ? 1 : -1))
+  const optionCards: InlineQueryDataResult<Card>[] = []
+  for (const optionType of optionTypes) {
+    const optionCard: Card = { color: CardColor.Option, types: { option: optionType } }
+    if (modeManager.playable(game, optionCard)) optionCards.push({
+      id: optionType.toString(),
+      data: optionCard,
+      attachment: {
+        id: CardStickers[optionCard.color][optionType][0],
+        type: AttachmentType.Sticker
+      }
+    })
+  }
+
+  return this.inlineWithContext(context, [
+    ...optionCards,
+    ...cards.sort(a => a.message ? 1 : -1)
+  ])
 }
 
 InlineManager.prototype.inlineModesWithContext = function (context, game, modes) {

@@ -1,4 +1,4 @@
-import { AttachmentType } from "@replikit/core"
+import { AttachmentType, resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
@@ -6,6 +6,7 @@ import {
   DeckManager,
   defaultMode,
   EventManager,
+  ModeManager,
   PlayerController,
   PlayerRepository,
   RepositoryBase,
@@ -17,14 +18,17 @@ import moment from "moment"
 export class GameController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
+  private readonly _modeManager: ModeManager
 
   /**
    *
    * @param gameRepository
    * @param eventManager
+   * @param modeManager
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager) {
     this._gameRepository = gameRepository
+    this._modeManager = modeManager
     this._eventManager = eventManager
   }
 
@@ -109,10 +113,12 @@ export class GameController {
     const stickerId = CardStickers[card.color][card.types.default!][0]
     const gameStarter: PlayerInfo = { id: -1, cards: [card] }
 
-    const controller = new PlayerController(this._gameRepository, this._eventManager)
-    await controller.play(game, gameStarter, card)
+    const controller = new PlayerController(this._gameRepository, this._eventManager, this._modeManager)
+    const turnMessage = await controller.play(game, gameStarter, card)
 
+    await resolveController("tg").sendMessage(game.id, turnMessage!)
     game.started = true
+
     this._eventManager.publish("game:started", {
       game, card, player: account
     })

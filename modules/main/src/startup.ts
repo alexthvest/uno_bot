@@ -1,6 +1,14 @@
 import { createScope, resolveController } from "@replikit/core"
+import { fromText } from "@replikit/messages"
 import { router } from "@replikit/router"
-import { GameRepository, EventManager, InlineManager, PlayerController, ModeManager } from "@uno_bot/main"
+import {
+  CardOptionType,
+  EventManager,
+  GameRepository,
+  InlineManager,
+  ModeManager,
+  PlayerController
+} from "@uno_bot/main"
 
 /** @internal */
 export const logger = createScope("main")
@@ -15,7 +23,7 @@ export const eventManager = new EventManager()
 export const inlineManager = new InlineManager(router)
 
 /** @internal */
-export const modeManager = new ModeManager()
+export const modeManager = new ModeManager(inlineManager)
 
 router.of("inline-query:received").use(async context => {
   const game = gameRepository.all.find(game => game.players.contains(context.account.id))
@@ -24,7 +32,7 @@ router.of("inline-query:received").use(async context => {
   if (game === undefined)
     return inlineManager.inlineNotInGameWithContext(context)
 
-  if (game.ownerId === context.account.id && !game.started) {
+  if (game.ownerId === context.account.id && modeManager.modes.length && !game.started) {
     const mode = await inlineManager.inlineModesWithContext(context, game, modeManager.modes)
 
     if (game.modes.some(m => m.name === mode.name))
@@ -36,10 +44,18 @@ router.of("inline-query:received").use(async context => {
   if (!game.started)
     return inlineManager.inlineGameNotStartedWithContext(context)
 
-  const card = await inlineManager.inlineCardsWithContext(context, game, player)
+  if (game.turns.turn?.id !== player.id)
+    return resolveController("tg").sendMessage(game.id, fromText("GAME_INFO"))
 
-  const playerController = new PlayerController(gameRepository, eventManager)
+  const options = [CardOptionType.Pass, CardOptionType.Draw]
+  const card = await inlineManager.inlineCardsWithContext(context, game, player, options, modeManager)
+
+  if (!modeManager.playable(game, card))
+    return
+
+  const playerController = new PlayerController(gameRepository, eventManager, modeManager)
   const message = await playerController.play(game, player, card)
 
-  return resolveController("tg").sendMessage(game.id, message)
+  if (message !== undefined)
+    return resolveController("tg").sendMessage(game.id, message)
 })
