@@ -106,7 +106,7 @@ export const CardStickers: { [key: string]: { [key: string]: string[] } } = {
     ],
     [CardType.DrawTwo]: [
       "BQADBAADCwIAAl9XmQAB64jIZrgXrQUC",
-      "BQADBAADdwIAAl9XmQABOHEpxSztCf8C "
+      "BQADBAADdwIAAl9XmQABOHEpxSztCf8C"
     ],
     [CardType.Skip]: [
       "BQADBAADDwIAAl9XmQAB17yhhnh46VQC",
@@ -160,7 +160,7 @@ export const CardStickers: { [key: string]: { [key: string]: string[] } } = {
     ],
     [CardType.DrawTwo]: [
       "BQADBAAD7QEAAl9XmQAB00Wii7R3gDUC",
-      "BQADBAADWQIAAl9XmQAB2kk__6_2IhMC "
+      "BQADBAADWQIAAl9XmQAB2kk__6_2IhMC"
     ],
     [CardType.Skip]: [
       "BQADBAAD8QEAAl9XmQAB_RJHYKqlc-wC",
