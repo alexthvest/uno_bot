@@ -1,7 +1,7 @@
 import { AttachmentType } from "@replikit/core"
 import { InlineQueryReceivedContext } from "@replikit/router"
 import { CardStickers, InlineManager } from "@uno_bot/main"
-import { Card, GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
+import { Card, GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
 
 declare module "../managers/inline.manager" {
   export interface InlineManager {
@@ -24,6 +24,14 @@ declare module "../managers/inline.manager" {
      * @param player
      */
     inlineCardsWithContext(context: InlineQueryReceivedContext, game: GameInfo, player: PlayerInfo): Promise<Card>
+
+    /**
+     * Sends inline menu with modes selection
+     * @param context
+     * @param game
+     * @param modes
+     */
+    inlineModesWithContext(context: InlineQueryReceivedContext, game: GameInfo, modes: Mode[]): Promise<Mode>
   }
 }
 
@@ -57,7 +65,7 @@ InlineManager.prototype.inlineGameNotStartedWithContext = function (context) {
 
 InlineManager.prototype.inlineCardsWithContext = function (context, game, player) {
   const cards: InlineQueryDataResult<Card>[] = player.cards.map((card, index) => {
-    const playable = game.lastCard?.color === card.color
+    const playable = game.previousCard?.color === card.color
     const stickers = CardStickers[card.color][card.types.default || card.types.special || ""]
 
     return {
@@ -76,4 +84,23 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
   })
 
   return this.inlineWithContext(context, cards.sort(a => a.message ? 1 : -1))
+}
+
+InlineManager.prototype.inlineModesWithContext = function (context, game, modes) {
+  return this.inlineWithContext(context, modes.map(mode => {
+    const name = mode.name.capitalize()
+    const icon = game.modes.some(m => m.name === mode.name) ? "✅" : "❌"
+
+    return {
+      id: mode.name,
+      data: mode,
+      article: {
+        title: `${icon} ${name}`,
+        description: mode.description || "No description"
+      },
+      message: {
+        text: name
+      }
+    }
+  }))
 }

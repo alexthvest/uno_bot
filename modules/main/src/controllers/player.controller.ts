@@ -133,7 +133,7 @@ export class PlayerController {
     player.cards.remove(card)
 
     game.deck.discard(card)
-    game.lastCard = card
+    game.previousCard = card
 
     const nextPlayer = game.turns.next()
     return fromText(`NEXT_PLAYER_TURN ${nextPlayer.firstName}`)

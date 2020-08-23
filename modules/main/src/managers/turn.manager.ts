@@ -2,19 +2,19 @@ import { RepositoryBase, shuffle } from "@uno_bot/main"
 import { PlayerInfo } from "@uno_bot/main/typings"
 
 export class TurnManager {
+  private readonly _playerRepository: RepositoryBase<PlayerInfo>
+
   private _turn: PlayerInfo | undefined
   private _reversed: boolean = false
-
   private _index: number = -1
-  private readonly _players: RepositoryBase<PlayerInfo>
 
   /**
    *
-   * @param players
+   * @param playerRepository
    */
-  constructor(players: RepositoryBase<PlayerInfo>) {
-    this._players = players
-    shuffle(this._players.all)
+  constructor(playerRepository: RepositoryBase<PlayerInfo>) {
+    this._playerRepository = playerRepository
+    shuffle(this._playerRepository.all)
   }
 
   /**
@@ -39,12 +39,12 @@ export class TurnManager {
     if (this._turn) this._turn.drew = false
     this._index += this.reversed ? -1 : 1
 
-    if (this._index >= this._players.length) {
+    if (this._index >= this._playerRepository.length) {
       this._index = 0
     } else if (this._index < 0) {
-      this._index = this._players.length - 1
+      this._index = this._playerRepository.length - 1
     }
 
-    return this._turn = this._players.all[this._index]
+    return this._turn = this._playerRepository.all[this._index]
   }
 }

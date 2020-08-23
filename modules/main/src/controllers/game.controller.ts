@@ -4,6 +4,7 @@ import { fromText, MessageBuilder } from "@replikit/messages"
 import {
   CardStickers,
   DeckManager,
+  defaultMode,
   EventManager,
   PlayerController,
   PlayerRepository,
@@ -41,20 +42,22 @@ export class GameController {
     if (game && game.started)
       return fromText("GAME_ALREADY_STARTED")
 
-    const players = new PlayerRepository()
+    const playerRepository = new PlayerRepository()
     this._gameRepository.remove(channelId)
 
     this._gameRepository.add({
       id: channelId,
-      ownerId: account.id, players,
+      ownerId: account.id,
+      players: playerRepository,
+      modes: [defaultMode],
       deck: new DeckManager(),
-      turns: new TurnManager(players),
+      turns: new TurnManager(playerRepository),
       createdAt: moment()
     })
 
     this._eventManager.publish("game:created", {
       game: this._gameRepository.get(channelId)!,
-      sender: account
+      player: account
     })
 
     return fromText("GAME_CREATED")
@@ -76,7 +79,7 @@ export class GameController {
 
     this._gameRepository.remove(channelId)
     this._eventManager.publish("game:closed", {
-      game, sender: account
+      game, player: account
     })
 
     return fromText("GAME_CLOSED")
@@ -111,7 +114,7 @@ export class GameController {
 
     game.started = true
     this._eventManager.publish("game:started", {
-      game, card, sender: account
+      game, card, player: account
     })
 
     return new MessageBuilder()

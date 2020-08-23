@@ -1,13 +1,14 @@
 import { HasId } from "@replikit/core/typings"
 import { RepositoryBase, DeckManager, TurnManager } from "@uno_bot/main"
-import { Card, PlayerInfo } from "@uno_bot/main/typings"
+import { Card, Mode, PlayerInfo } from "@uno_bot/main/typings"
 import { Moment } from "moment"
 
 export interface GameInfo extends HasId {
   ownerId: number
+  previousCard?: Card
 
   players: RepositoryBase<PlayerInfo>
-  lastCard?: Card
+  modes: Mode[]
 
   deck: DeckManager
   turns: TurnManager

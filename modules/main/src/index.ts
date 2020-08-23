@@ -7,6 +7,7 @@ export * from "./managers/event.manager"
 export * from "./managers/deck.manager"
 export * from "./managers/inline.manager"
 export * from "./managers/turn.manager"
+export * from "./managers/mode.manager"
 
 import "./extensions/String.extensions"
 import "./extensions/Array.extensions"
@@ -18,6 +19,8 @@ export * from "./repositories/player.repository"
 
 export * from "./controllers/game.controller"
 export * from "./controllers/player.controller"
+
+export * from "./modes/default.mode"
 
 import "./commands/create.command"
 import "./commands/close.command"

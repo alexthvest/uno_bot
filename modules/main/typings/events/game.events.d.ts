@@ -8,9 +8,10 @@ declare module "@uno_bot/main/typings/events/index.events" {
     "game:started": GameStartedContext
   }
 }
+
 export interface GameContextBase {
   game: GameInfo
-  sender: AccountInfo
+  player: AccountInfo
 }
 
 export interface GameCreatedContext extends GameContextBase {}
