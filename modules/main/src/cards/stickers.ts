@@ -8,6 +8,24 @@ export const ColorEmoji: { [key: string]: string } = {
   [CardColor.Black]: "⬛"
 }
 
+export const CardScores: { [key: string]: number } = {
+  [CardType.Zero]: 0,
+  [CardType.One]: 1,
+  [CardType.Two]: 2,
+  [CardType.Three]: 3,
+  [CardType.Four]: 4,
+  [CardType.Five]: 5,
+  [CardType.Six]: 6,
+  [CardType.Seven]: 7,
+  [CardType.Eight]: 8,
+  [CardType.Nine]: 9,
+  [CardType.Skip]: 20,
+  [CardType.DrawTwo]: 20,
+  [CardType.Reverse]: 20,
+  [CardSpecialType.Color]: 50,
+  [CardSpecialType.DrawFour]: 50
+}
+
 export const CardStickers: { [key: string]: { [key: string]: string[] } } = {
   [CardColor.Red]: {
     [CardType.Zero]: [

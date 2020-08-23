@@ -2,8 +2,8 @@ import { resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
-import { EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
-import { Card, GameInfo, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
+import { CardScores, CardType, EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
+import { Card, GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -134,8 +134,11 @@ export class PlayerController {
    */
   public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage | undefined> {
     await this._modeManager.play(game, player, card)
-    if (card.types.option) return
 
+    this._eventManager.subscribe("player:card:played", this.onCardPlayed.bind(this))
+    this._eventManager.publish("player:card:played", { game, player, card })
+
+    if (card.types.option) return
     player.cards.remove(card)
 
     game.deck.discard(card)
@@ -143,5 +146,32 @@ export class PlayerController {
 
     const nextPlayer = game.turns.next()
     return fromText(`NEXT_PLAYER_TURN ${nextPlayer.firstName}`)
+  }
+
+  /**
+   * Handles card played event
+   * @param context
+   */
+  private onCardPlayed(context: PlayerCardPlayedContext): unknown {
+    if (context.game.turns.turn && context.player.cards.length === 0) {
+      const score = context.game.players.all.filter(p => p.id !== context.player.id).reduce((score, player) => {
+        for (const card of player.cards) {
+          score += CardScores[card.types.default || card.types.special || ""]
+        }
+        return score
+      }, 0)
+
+      this._eventManager.publish("game:closed", { ...context })
+      this._eventManager.publish("player:won", { ...context, score })
+
+      context.game.started = false
+      this._gameRepository.remove(context.game.id)
+
+      return this._controller.sendMessage(context.game.id, fromText(`Player won!\nScore: ${score}`))
+    }
+
+    if (context.game.turns.turn && context.player.cards.length === 1) {
+      return this._controller.sendMessage(context.game.id, fromText("UNO!"))
+    }
   }
 }

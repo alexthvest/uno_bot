@@ -5,6 +5,7 @@ declare module "@uno_bot/main/typings/events/index.events" {
     "player:joined": PlayerJoinedContext
     "player:left": PlayerLeftContext
     "player:kicked": PlayerKickedContext
+    "player:won": PlayerWonContext
     "player:card:played":  PlayerCardPlayedContext
   }
 }
@@ -19,6 +20,10 @@ export interface PlayerJoinedContext extends PlayerContextBase {}
 export interface PlayerLeftContext extends PlayerContextBase {}
 
 export interface PlayerKickedContext extends PlayerContextBase {}
+
+export interface PlayerWonContext extends PlayerContextBase {
+  score: number
+}
 
 export interface PlayerCardPlayedContext extends PlayerContextBase {
   card: Card
