@@ -5,6 +5,7 @@ declare module "@uno_bot/main/typings/events/index.events" {
   export interface EventContextMap {
     "game:created": GameCreatedContext
     "game:closed": GameClosedContext
+    "game:ended": GameEndedContext
     "game:started": GameStartedContext
   }
 }
@@ -18,6 +19,9 @@ export interface GameCreatedContext extends GameContextBase {}
 
 export interface GameClosedContext extends GameContextBase {}
 
+export interface GameEndedContext extends GameContextBase {}
+
 export interface GameStartedContext extends GameContextBase {
   card: Card
 }
+

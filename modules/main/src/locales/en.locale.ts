@@ -12,6 +12,7 @@ locales.add("en", DefaultLocale, {
   gameNotFound: "No game is running at the moment",
   gameNotOwner: "You are not the game owner",
   gameNotEnoughPlayers: "Not enough players to start the game",
+  gameNotStarted: "Game not started yet",
   gameEnded: "Game ended!",
   gameInfo: game => [
     `Turn: ${displayAccountName(game.turns.turn!)}`,

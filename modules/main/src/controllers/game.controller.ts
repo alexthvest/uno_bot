@@ -1,6 +1,6 @@
 import { AttachmentType } from "@replikit/core"
-import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
+import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import {
   CardStickers,
   DeckManager,
@@ -13,7 +13,7 @@ import {
   RepositoryBase,
   TurnManager
 } from "@uno_bot/main"
-import { GameInfo } from "@uno_bot/main/typings"
+import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
 export class GameController {
@@ -110,7 +110,7 @@ export class GameController {
     if (game.started)
       return fromText(this._locale.gameAlreadyStarted)
 
-    if (game.players.length < 1) // TODO: Change to 2 for production
+    if (game.players.length < 2)
       return fromText(this._locale.gameNotEnoughPlayers)
 
     game.started = true
@@ -134,5 +134,27 @@ export class GameController {
         type: AttachmentType.Sticker,
         controllerName: "tg"
       }).build()
+  }
+
+  /**
+   * Ends the game
+   * @param channelId
+   * @param player
+   */
+  public end(channelId: number, player: PlayerInfo): OutMessage {
+    const game = this._gameRepository.get(channelId)
+
+    if (game === undefined)
+      return fromText(this._locale.gameNotFound)
+
+    if (!game.started)
+      return fromText(this._locale.gameNotStarted)
+
+    game.started = false
+
+    this._gameRepository.remove(channelId)
+    this._eventManager.publish("game:ended", { game, player })
+
+    return fromText(this._locale.gameEnded)
   }
 }

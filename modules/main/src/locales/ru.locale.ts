@@ -12,6 +12,7 @@ locales.add("ru", DefaultLocale, {
   gameNotFound: "Нет активных игр в данный момент. Создайте новую, написав /create",
   gameNotOwner: "Вы не владелец игры",
   gameNotEnoughPlayers: "Недостаточно игроков чтобы начать игру",
+  gameNotStarted: "Игра еще не началась",
   gameEnded: "Игра окончена!",
   gameInfo: game => [
     `Ход: ${displayAccountName(game.turns.turn!)}`,
@@ -27,8 +28,8 @@ locales.add("ru", DefaultLocale, {
   playerAlreadyJoined: "Вы уже присоединились к игре",
   playerNotInGame: "Игрок не находится в игре",
   playerKicked: "Пользователь кикнут из игры",
-  playerWon: account =>
-    `${displayAccountName(account)} победил!`,
+  playerWon: (account, score) =>
+    `${displayAccountName(account)} победил!\nCчёт: ${score}`,
   playerDraw: (account, count) =>
     `${displayAccountName(account)} берет ${ru.plural(count, "$ карту", "$ карты")}`,
   playerSkipTurn: account =>

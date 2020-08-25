@@ -149,18 +149,6 @@ InlineManager.prototype.inlineModesWithContext = function (context, game, modes)
 }
 
 InlineManager.prototype.inlineColors = async function (game, player) {
-  let answer: string
-
-  do {
-    answer = await this.inline(player.id, {
-      results: createColorsInlineResults(game, player)
-    })
-  } while (answer === "info")
-
-  return answer as CardColor
-}
-
-function createColorsInlineResults(game: GameInfo, player: PlayerInfo): InlineQueryDataResult<string>[] {
   const colors = [CardColor.Red, CardColor.Green, CardColor.Blue, CardColor.Yellow]
   const locale = locales.resolve(DefaultLocale, player.language)
 
@@ -175,7 +163,8 @@ function createColorsInlineResults(game: GameInfo, player: PlayerInfo): InlineQu
     }
   })
 
-  return [...colorResults, {
+  let answer: string
+  const results = [...colorResults, {
     id: "info",
     data: "info",
     article: {
@@ -186,4 +175,10 @@ function createColorsInlineResults(game: GameInfo, player: PlayerInfo): InlineQu
       text: locale.gameInfo(game)
     }
   }]
+
+  do {
+    answer = await this.inline(player.id, { results })
+  } while (answer === "info")
+
+  return answer as CardColor
 }

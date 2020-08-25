@@ -2,15 +2,15 @@ import { resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
-import { CardScores, DefaultLocale, EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
+import { CardScores, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
 import { Card, GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
-
   private readonly _locale: DefaultLocale
+
   private readonly _controller: TelegramController
 
   /**
@@ -24,8 +24,8 @@ export class PlayerController {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
-
     this._locale = locale
+
     this._controller = resolveController("tg")
   }
 
@@ -156,8 +156,7 @@ export class PlayerController {
       this._eventManager.subscribeOnce("player:card:played", this.onCardPlayed.bind(this))
       this._eventManager.publish("player:card:played", { game, player, card })
 
-      if (!game.started)
-        return fromText(this._locale.gameEnded)
+      if (!game.started) return
 
       const nextPlayer = game.turns.next()
       return fromText(this._locale.nextTurn(nextPlayer))
@@ -165,27 +164,45 @@ export class PlayerController {
   }
 
   /**
+   *
+   * @param channelId
+   * @param player
+   */
+  public won(channelId: number, player: PlayerInfo): OutMessage {
+    const game = this._gameRepository.get(channelId)
+
+    if (game === undefined)
+      return fromText(this._locale.gameNotFound)
+
+    if (!game.started)
+      return fromText(this._locale.gameNotStarted)
+
+    const score = game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
+      for (const card of player.cards) {
+        score += CardScores[card.types.default || card.types.special || ""]
+      }
+      return score
+    }, 0)
+
+    this._eventManager.publish("player:won", { game, player, score })
+    return fromText(this._locale.playerWon(player, score))
+  }
+
+  /**
    * Handles card played event
    * @param context
    */
-  private onCardPlayed(context: PlayerCardPlayedContext): unknown {
+  private async onCardPlayed(context: PlayerCardPlayedContext): Promise<unknown> {
     const { game, player } = context
 
     if (game.turns.turn && player.cards.length === 0) {
-      const score = game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
-        for (const card of player.cards) {
-          score += CardScores[card.types.default || card.types.special || ""]
-        }
-        return score
-      }, 0)
+      const gameController = new GameController(this._gameRepository, this._eventManager, this._modeManager, this._locale)
 
-      this._eventManager.publish("game:closed", { ...context })
-      this._eventManager.publish("player:won", { ...context, score })
+      const wonMessage = this.won(game.id, player)
+      const endMessage = gameController.end(game.id, player)
 
-      game.started = false
-      this._gameRepository.remove(game.id)
-
-      return this._controller.sendMessage(game.id, fromText(this._locale.playerWon(player, score)))
+      await this._controller.sendMessage(game.id, wonMessage)
+      return this._controller.sendMessage(game.id, endMessage)
     }
 
     if (game.turns.turn && player.cards.length === 1) {

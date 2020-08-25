@@ -14,6 +14,7 @@ export class DefaultLocale {
   public gameNotFound: string
   public gameNotOwner: string
   public gameNotEnoughPlayers: string
+  public gameNotStarted: string
   public gameEnded: string
   public gameInfo: (game: GameInfo) => string
 
