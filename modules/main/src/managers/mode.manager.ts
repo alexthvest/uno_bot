@@ -1,5 +1,6 @@
 import { resolveController } from "@replikit/core"
-import { CardColor, CardOptionType, CardSpecialType, CardType, ColorEmoji, InlineManager } from "@uno_bot/main"
+import { locales } from "@replikit/i18n"
+import { CardOptionType, CardSpecialType, CardType, DefaultLocale, InlineManager } from "@uno_bot/main"
 import { Card, GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
 
 export class ModeManager {
@@ -63,23 +64,10 @@ export class ModeManager {
   private createContext(game: GameInfo, player: PlayerInfo, card: Card): ModeRuleContext {
     return {
       game, card, player,
+      locale: locales.resolve(DefaultLocale, player.language),
       message: message => resolveController("tg").sendMessage(game.id, message),
       inline: results => this._inlineManager.inline(player.id, { results }),
-      inlineColors: () => {
-        const colors = [CardColor.Red, CardColor.Green, CardColor.Blue, CardColor.Yellow]
-        return this._inlineManager.inline(player.id, {
-          results: colors.map(color => {
-            const name = color.toString().capitalize()
-            const emoji = ColorEmoji[color]
-
-            return {
-              id: color,
-              data: color,
-              article: { title: `${emoji} ${name}` }
-            }
-          })
-        })
-      }
+      inlineColors: () => this._inlineManager.inlineColors(game, player)
     }
   }
 

@@ -2,13 +2,15 @@ import { resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
-import { CardScores, CardType, EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
+import { CardScores, DefaultLocale, EventManager, ModeManager, RepositoryBase } from "@uno_bot/main"
 import { Card, GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
+
+  private readonly _locale: DefaultLocale
   private readonly _controller: TelegramController
 
   /**
@@ -16,11 +18,14 @@ export class PlayerController {
    * @param gameRepository
    * @param eventManager
    * @param modeManager
+   * @param locale
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
+
+    this._locale = locale
     this._controller = resolveController("tg")
   }
 
@@ -33,12 +38,13 @@ export class PlayerController {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
+      return fromText(this._locale.gameNotFound)
 
     if (this._gameRepository.has(game => game.players.contains(account.id)))
-      return fromText("PLAYER_ALREADY_IN_GAME")
+      return fromText(this._locale.playerAlreadyJoined)
 
-    // TODO: Add deck empty check
+    if (game.deck.empty)
+      return fromText(this._locale.deckIsEmpty)
 
     const player = game.players.add({
       ...account,
@@ -49,7 +55,7 @@ export class PlayerController {
       game, player
     })
 
-    return fromText("PLAYER_JOINED")
+    return fromText(this._locale.playerJoined)
   }
 
   /**
@@ -61,10 +67,10 @@ export class PlayerController {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
+      return fromText(this._locale.gameNotFound)
 
     if (!game.players.contains(accountId))
-      return fromText("PLAYER_NOT_IN_GAME")
+      return fromText(this._locale.playerNotInGame)
 
     const player = game.players.get(accountId)!
 
@@ -74,7 +80,7 @@ export class PlayerController {
     this._eventManager.subscribeOnce("player:left", this.onPlayerLeft.bind(this))
     this._eventManager.publish("player:left", { game, player })
 
-    return fromText("PLAYER_LEFT_GAME")
+    return fromText(this._locale.playerLeft)
   }
 
   /**
@@ -89,11 +95,11 @@ export class PlayerController {
 
     if (game.players.length < 2) {
       this._gameRepository.remove(game.id)
-      return this._controller.sendMessage(game.id, fromText("NOT_ENOUGH_PLAYER_TO_CONTINUE_GAME"))
+      return this._controller.sendMessage(game.id, fromText(this._locale.gameNotEnoughPlayers))
     }
 
-    game.turns.next()
-    return this._controller.sendMessage(game.id, fromText("NEXT_PLAYER_TURN"))
+    const nextPlayer = game.turns.next()
+    return this._controller.sendMessage(game.id, fromText(this._locale.nextTurn(nextPlayer)))
   }
 
   /**
@@ -106,16 +112,16 @@ export class PlayerController {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
+      return fromText(this._locale.gameNotFound)
 
     if (game.ownerId !== account.id)
-      return fromText("NOT_GAME_OWNER")
+      return fromText(this._locale.gameNotOwner)
 
     if (target?.id === undefined)
-      return fromText("NO_KICK_TARGET")
+      return fromText(this._locale.noKickTarget)
 
     if (!game.players.contains(target.id))
-      return fromText("PLAYER_NOT_IN_GAME")
+      return fromText(this._locale.playerNotInGame)
 
     await this.leave(channelId, target.id)
 
@@ -123,7 +129,7 @@ export class PlayerController {
       game, player: game.players.get(target.id)!
     })
 
-    return fromText("PLAYER_KICKED")
+    return fromText(this._locale.playerKicked)
   }
 
   /**
@@ -133,19 +139,29 @@ export class PlayerController {
    * @param card
    */
   public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage | undefined> {
+    if (player.id !== -1 && game.turns.turn?.id !== player.id)
+      return fromText(this._locale.gameInfo(game))
+
+    if (player.id !== -1 && !this._modeManager.playable(game, card))
+      return
+
     await this._modeManager.play(game, player, card)
 
-    this._eventManager.subscribe("player:card:played", this.onCardPlayed.bind(this))
-    this._eventManager.publish("player:card:played", { game, player, card })
+    if (card.types.option === undefined) {
+      player.cards.remove(card)
 
-    if (card.types.option) return
-    player.cards.remove(card)
+      game.deck.discard(card)
+      game.previousCard = card
 
-    game.deck.discard(card)
-    game.previousCard = card
+      this._eventManager.subscribeOnce("player:card:played", this.onCardPlayed.bind(this))
+      this._eventManager.publish("player:card:played", { game, player, card })
 
-    const nextPlayer = game.turns.next()
-    return fromText(`NEXT_PLAYER_TURN ${nextPlayer.firstName}`)
+      if (!game.started)
+        return fromText(this._locale.gameEnded)
+
+      const nextPlayer = game.turns.next()
+      return fromText(this._locale.nextTurn(nextPlayer))
+    }
   }
 
   /**
@@ -153,8 +169,10 @@ export class PlayerController {
    * @param context
    */
   private onCardPlayed(context: PlayerCardPlayedContext): unknown {
-    if (context.game.turns.turn && context.player.cards.length === 0) {
-      const score = context.game.players.all.filter(p => p.id !== context.player.id).reduce((score, player) => {
+    const { game, player } = context
+
+    if (game.turns.turn && player.cards.length === 0) {
+      const score = game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
         for (const card of player.cards) {
           score += CardScores[card.types.default || card.types.special || ""]
         }
@@ -164,14 +182,14 @@ export class PlayerController {
       this._eventManager.publish("game:closed", { ...context })
       this._eventManager.publish("player:won", { ...context, score })
 
-      context.game.started = false
-      this._gameRepository.remove(context.game.id)
+      game.started = false
+      this._gameRepository.remove(game.id)
 
-      return this._controller.sendMessage(context.game.id, fromText(`Player won!\nScore: ${score}`))
+      return this._controller.sendMessage(game.id, fromText(this._locale.playerWon(player, score)))
     }
 
-    if (context.game.turns.turn && context.player.cards.length === 1) {
-      return this._controller.sendMessage(context.game.id, fromText("UNO!"))
+    if (game.turns.turn && player.cards.length === 1) {
+      return this._controller.sendMessage(game.id, fromText(this._locale.uno))
     }
   }
 }

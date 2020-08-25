@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "baseUrl": "modules",
     "strict": true,
+    "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "paths": {
       "@uno_bot/*": [

@@ -1,8 +1,8 @@
 import { createScope, resolveController } from "@replikit/core"
-import { fromText } from "@replikit/messages"
 import { router } from "@replikit/router"
 import {
   CardOptionType,
+  DefaultLocale,
   EventManager,
   GameRepository,
   InlineManager,
@@ -26,6 +26,8 @@ export const inlineManager = new InlineManager(router)
 export const modeManager = new ModeManager(inlineManager)
 
 router.of("inline-query:received").use(async context => {
+  const locale = context.getLocale(DefaultLocale)
+
   const game = gameRepository.all.find(game => game.players.contains(context.account.id))
   const player = game?.players.get(context.account.id)!
 
@@ -44,16 +46,10 @@ router.of("inline-query:received").use(async context => {
   if (!game.started)
     return inlineManager.inlineGameNotStartedWithContext(context)
 
-  if (game.turns.turn?.id !== player.id)
-    return resolveController("tg").sendMessage(game.id, fromText("GAME_INFO"))
-
   const options = [CardOptionType.Pass, CardOptionType.Draw]
   const card = await inlineManager.inlineCardsWithContext(context, game, player, options, modeManager)
 
-  if (!modeManager.playable(game, card))
-    return
-
-  const playerController = new PlayerController(gameRepository, eventManager, modeManager)
+  const playerController = new PlayerController(gameRepository, eventManager, modeManager, locale)
   const message = await playerController.play(game, player, card)
 
   if (message !== undefined)

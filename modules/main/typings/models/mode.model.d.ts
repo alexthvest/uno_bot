@@ -1,5 +1,5 @@
 import { OutMessage, SendedMessage } from "@replikit/core/typings"
-import { CardColor, CardOptionType, CardSpecialType, CardType } from "@uno_bot/main"
+import { CardColor, CardOptionType, CardSpecialType, CardType, DefaultLocale } from "@uno_bot/main"
 import { Card, GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
 
 export interface Mode {
@@ -27,6 +27,7 @@ export interface ModeRuleContext {
   card: Card
   game: GameInfo
   player: PlayerInfo
+  locale: DefaultLocale
 
   /**
    * Sends inline menu to user

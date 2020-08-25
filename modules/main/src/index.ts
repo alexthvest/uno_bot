@@ -1,9 +1,10 @@
 export * from "./utils/array.utils"
+export * from "./utils/display.utils"
+
+export * from "./locales/default.locale"
 
 import "./locales/en.locale"
 import "./locales/ru.locale"
-
-export * from "./locales/default.locale"
 
 export * from "./cards/types"
 export * from "./cards/stickers"

@@ -1,9 +1,10 @@
-import { AttachmentType, resolveController } from "@replikit/core"
+import { AttachmentType } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
   CardStickers,
   DeckManager,
+  DefaultLocale,
   defaultMode,
   EventManager,
   ModeManager,
@@ -12,24 +13,27 @@ import {
   RepositoryBase,
   TurnManager
 } from "@uno_bot/main"
-import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
+import { GameInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
 export class GameController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
+  private readonly _locale: DefaultLocale
 
   /**
    *
    * @param gameRepository
    * @param eventManager
    * @param modeManager
+   * @param locale
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager) {
+  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._modeManager = modeManager
     this._eventManager = eventManager
+    this._locale = locale
   }
 
   /**
@@ -41,10 +45,10 @@ export class GameController {
     const game = this._gameRepository.get(channelId)
 
     if (game && moment().diff(game.createdAt, "minutes") < 2)
-      return fromText("TIME_HAS_NOT_PASSED")
+      return fromText(this._locale.timeHasNotPassed(2))
 
     if (game && game.started)
-      return fromText("GAME_ALREADY_STARTED")
+      return fromText(this._locale.gameAlreadyStarted)
 
     const playerRepository = new PlayerRepository()
     this._gameRepository.remove(channelId)
@@ -64,7 +68,7 @@ export class GameController {
       player: account
     })
 
-    return fromText("GAME_CREATED")
+    return fromText(this._locale.gameCreated)
   }
 
   /**
@@ -76,17 +80,17 @@ export class GameController {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
+      return fromText(this._locale.gameNotFound)
 
     if (game.ownerId !== account.id)
-      return fromText("NOT_GAME_OWNER")
+      return fromText(this._locale.gameNotOwner)
 
     this._gameRepository.remove(channelId)
     this._eventManager.publish("game:closed", {
       game, player: account
     })
 
-    return fromText("GAME_CLOSED")
+    return fromText(this._locale.gameClosed)
   }
 
   /**
@@ -98,33 +102,33 @@ export class GameController {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
-      return fromText("GAME_NOT_FOUND")
+      return fromText(this._locale.gameNotFound)
 
     if (game.ownerId !== account.id)
-      return fromText("NOT_GAME_OWNER")
+      return fromText(this._locale.gameNotOwner)
 
     if (game.started)
-      return fromText("GAME_ALREADY_STARTED")
+      return fromText(this._locale.gameAlreadyStarted)
 
     if (game.players.length < 1) // TODO: Change to 2 for production
-      return fromText("NOT_ENOUGH_PLAYERS")
+      return fromText(this._locale.gameNotEnoughPlayers)
+
+    game.started = true
+    game.startedAt = moment()
 
     const card = game.deck.drawFirst()
     const stickerId = CardStickers[card.color][card.types.default!][0]
-    const gameStarter: PlayerInfo = { id: -1, cards: [card] }
 
-    const controller = new PlayerController(this._gameRepository, this._eventManager, this._modeManager)
-    const turnMessage = await controller.play(game, gameStarter, card)
-
-    await resolveController("tg").sendMessage(game.id, turnMessage!)
-    game.started = true
+    const controller = new PlayerController(this._gameRepository, this._eventManager, this._modeManager, this._locale)
+    await controller.play(game, { id: -1, cards: [card] }, card)
 
     this._eventManager.publish("game:started", {
       game, card, player: account
     })
 
     return new MessageBuilder()
-      .addText("GAME_STARTED")
+      .addLine(this._locale.gameStarted)
+      .addLine(this._locale.nextTurn(game.turns.turn!))
       .addAttachment({
         id: stickerId,
         type: AttachmentType.Sticker,

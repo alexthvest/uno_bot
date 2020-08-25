@@ -1,6 +1,15 @@
 import { AttachmentType } from "@replikit/core"
+import { locales } from "@replikit/i18n"
 import { InlineQueryReceivedContext } from "@replikit/router"
-import { CardColor, CardOptionType, CardStickers, InlineManager, ModeManager } from "@uno_bot/main"
+import {
+  CardColor,
+  CardOptionType,
+  CardStickers,
+  ColorEmoji,
+  DefaultLocale,
+  InlineManager,
+  ModeManager
+} from "@uno_bot/main"
 import { Card, GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
 
 declare module "../managers/inline.manager" {
@@ -39,38 +48,48 @@ declare module "../managers/inline.manager" {
      * @param modes
      */
     inlineModesWithContext(context: InlineQueryReceivedContext, game: GameInfo, modes: Mode[]): Promise<Mode>
+
+    /**
+     * Sends inline menu with colors selection
+     * @param game
+     * @param player
+     */
+    inlineColors(game: GameInfo, player: PlayerInfo): Promise<CardColor>
   }
 }
 
 InlineManager.prototype.inlineNotInGameWithContext = function (context) {
+  const locale = context.getLocale(DefaultLocale)
   return this.inlineWithContext(context, [{
     id: "info",
     data: "info",
     article: {
-      title: "NOT_IN_GAME",
-      description: "DESCRIPTION"
+      title: locale.notInGameTitle,
+      description: locale.notInGameDescription
     },
     message: {
-      text: "DESCRIPTION"
+      text: locale.notInGameDescription
     }
   }])
 }
 
 InlineManager.prototype.inlineGameNotStartedWithContext = function (context) {
+  const locale = context.getLocale(DefaultLocale)
   return this.inlineWithContext(context, [{
     id: "info",
     data: "info",
     article: {
-      title: "GAME_NOT_STARTED",
-      description: "DESCRIPTION"
+      title: locale.gameNotStartedTitle,
+      description: locale.gameNotStartedDescription
     },
     message: {
-      text: "DESCRIPTION"
+      text: locale.gameNotStartedDescription
     }
   }])
 }
 
 InlineManager.prototype.inlineCardsWithContext = function (context, game, player, optionTypes: CardOptionType[], modeManager) {
+  const locale = context.getLocale(DefaultLocale)
   const cards: InlineQueryDataResult<Card>[] = player.cards.map((card, index) => {
     const playable = modeManager.playable(game, card)
     const stickers = CardStickers[card.color][card.types.default || card.types.special || ""]
@@ -84,7 +103,7 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
       },
       ...((game.turns.turn?.id !== player.id || !playable) && {
         message: {
-          text: "WRONG_TURN"
+          text: locale.gameInfo(game)
         }
       })
     }
@@ -110,6 +129,7 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
 }
 
 InlineManager.prototype.inlineModesWithContext = function (context, game, modes) {
+  const locale = context.getLocale(DefaultLocale)
   return this.inlineWithContext(context, modes.map(mode => {
     const name = mode.name.capitalize()
     const icon = game.modes.some(m => m.name === mode.name) ? "✅" : "❌"
@@ -119,11 +139,51 @@ InlineManager.prototype.inlineModesWithContext = function (context, game, modes)
       data: mode,
       article: {
         title: `${icon} ${name}`,
-        description: mode.description || "No description"
+        description: mode.description || locale.noDescription
       },
       message: {
         text: name
       }
     }
   }))
+}
+
+InlineManager.prototype.inlineColors = async function (game, player) {
+  let answer: string
+
+  do {
+    answer = await this.inline(player.id, {
+      results: createColorsInlineResults(game, player)
+    })
+  } while (answer === "info")
+
+  return answer as CardColor
+}
+
+function createColorsInlineResults(game: GameInfo, player: PlayerInfo): InlineQueryDataResult<string>[] {
+  const colors = [CardColor.Red, CardColor.Green, CardColor.Blue, CardColor.Yellow]
+  const locale = locales.resolve(DefaultLocale, player.language)
+
+  const colorResults = colors.map(color => {
+    const name = color.toString().capitalize()
+    const emoji = ColorEmoji[color]
+
+    return {
+      id: color,
+      data: color,
+      article: { title: `${emoji} ${name}` }
+    }
+  })
+
+  return [...colorResults, {
+    id: "info",
+    data: "info",
+    article: {
+      title: locale.yourCardsTitle,
+      description: player.cards.map(c => ColorEmoji[c.color]).join("")
+    },
+    message: {
+      text: locale.gameInfo(game)
+    }
+  }]
 }

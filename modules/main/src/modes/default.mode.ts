@@ -10,7 +10,7 @@ export const defaultMode: Mode = {
       playable: context => context.player.drew || false,
       handle: context => {
         const nextPlayer = context.game.turns.next()
-        return context.message(fromText(`NEXT_PLAYER_TURN ${nextPlayer.firstName}`))
+        return context.message(fromText(context.locale.nextTurn(nextPlayer)))
       }
     },
     {
@@ -22,11 +22,18 @@ export const defaultMode: Mode = {
         context.player.cards.push(card)
         context.player.drew = true
 
-        return context.message(fromText(`${context.player.firstName} draws card`))
+        return context.message(fromText(context.locale.playerDraw(context.player, 1)))
       }
     },
     {
       card: CardType.Skip,
+      handle: async context => {
+        const nextPlayer = context.game.turns.next()
+        return context.message(fromText(context.locale.playerSkipTurn(nextPlayer)))
+      }
+    },
+    {
+      card: CardType.Reverse,
       handle: context => {
         if (context.game.players.length === 2)
           return context.game.turns.next()
@@ -36,19 +43,21 @@ export const defaultMode: Mode = {
     },
     {
       card: CardType.DrawTwo,
-      handle: context => {
+      handle: async context => {
+
         const player = context.game.turns.next()
         const cards = context.game.deck.drawFew(2)
 
         player.cards.push(...cards)
+        await context.message(fromText(context.locale.playerSkipTurn(player)))
 
-        return context.message(fromText(`${player.firstName} draws 2 cards`))
+        return context.message(fromText(context.locale.playerDraw(player, 2)))
       }
     },
     {
       card: CardSpecialType.DrawFour,
       handle: async context => {
-        await context.message(fromText("Choose color"))
+        await context.message(fromText(context.locale.chooseColor))
 
         context.card.color = await context.inlineColors()
 
@@ -56,13 +65,15 @@ export const defaultMode: Mode = {
         const cards = context.game.deck.drawFew(4)
 
         player.cards.push(...cards)
-        return context.message(fromText(`${player.firstName} draws 4 cards`))
+
+        await context.message(fromText(context.locale.playerSkipTurn(player)))
+        return context.message(fromText(context.locale.playerDraw(player, 4)))
       }
     },
     {
       card: CardSpecialType.Color,
       handle: async context => {
-        await context.message(fromText("Choose color"))
+        await context.message(fromText(context.locale.chooseColor))
         context.card.color = await context.inlineColors()
       }
     }
