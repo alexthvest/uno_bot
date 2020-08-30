@@ -3,9 +3,6 @@ export * from "./utils/display.utils"
 
 export * from "./locales/default.locale"
 
-import "./locales/en.locale"
-import "./locales/ru.locale"
-
 export * from "./cards/types"
 export * from "./cards/stickers"
 
@@ -27,6 +24,9 @@ export * from "./controllers/game.controller"
 export * from "./controllers/player.controller"
 
 export * from "./modes/default.mode"
+
+import "./locales/en.locale"
+import "./locales/ru.locale"
 
 import "./commands/create.command"
 import "./commands/close.command"

@@ -1,6 +1,6 @@
-import { AttachmentType } from "@replikit/core"
-import { fromText, MessageBuilder } from "@replikit/messages"
+import { AttachmentType, config } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
+import { fromText, MessageBuilder } from "@replikit/messages"
 import {
   CardStickers,
   DeckManager,
@@ -29,7 +29,8 @@ export class GameController {
    * @param modeManager
    * @param locale
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager, locale: DefaultLocale) {
+  public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
+                     modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._modeManager = modeManager
     this._eventManager = eventManager
@@ -44,7 +45,7 @@ export class GameController {
   public create(channelId: number, account: AccountInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
-    if (game && moment().diff(game.createdAt, "minutes") < 2)
+    if (game && moment().diff(game.createdAt, "seconds") < config.uno.createWaitTime)
       return fromText(this._locale.timeHasNotPassed(2))
 
     if (game && game.started)
@@ -110,11 +111,12 @@ export class GameController {
     if (game.started)
       return fromText(this._locale.gameAlreadyStarted)
 
-    if (game.players.length < 2)
+    if (game.players.length < config.uno.minPlayers)
       return fromText(this._locale.gameNotEnoughPlayers)
 
     game.started = true
     game.startedAt = moment()
+    game.turns.shuffle()
 
     const card = game.deck.drawFirst()
     const stickerId = CardStickers[card.color][card.types.default!][0]

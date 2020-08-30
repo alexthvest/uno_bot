@@ -9,7 +9,7 @@ export class EventManager {
    * @param event
    * @param handler
    */
-  subscribe<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
+  public subscribe<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
     this._emitter.on(event, handler)
     return this
   }
@@ -19,7 +19,7 @@ export class EventManager {
    * @param event
    * @param handler
    */
-  subscribeOnce<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
+  public subscribeOnce<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
     this._emitter.once(event, handler)
     return this
   }
@@ -29,7 +29,7 @@ export class EventManager {
    * @param event
    * @param handler
    */
-  unsubscribe<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
+  public unsubscribe<T extends EventName>(event: T, handler: EventHandler<T>): EventManager {
     this._emitter.removeListener(event, handler)
     return this
   }
@@ -39,7 +39,7 @@ export class EventManager {
    * @param event
    * @param context
    */
-  publish<T extends EventName>(event: T, context: EventContextMap[T]): boolean {
+  public publish<T extends EventName>(event: T, context: EventContextMap[T]): boolean {
     return this._emitter.emit(event, context)
   }
 
@@ -47,7 +47,7 @@ export class EventManager {
    *
    * @param event
    */
-  count<T extends EventName>(event: T): number {
+  public count<T extends EventName>(event: T): number {
     return this._emitter.listenerCount(event)
   }
 }

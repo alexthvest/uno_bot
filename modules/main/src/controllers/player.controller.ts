@@ -1,4 +1,4 @@
-import { resolveController } from "@replikit/core"
+import { config, resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
@@ -20,7 +20,8 @@ export class PlayerController {
    * @param modeManager
    * @param locale
    */
-  constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager, modeManager: ModeManager, locale: DefaultLocale) {
+  public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
+                     modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
@@ -93,7 +94,7 @@ export class PlayerController {
     if (!game.started)
       return Promise.resolve()
 
-    if (game.players.length < 2) {
+    if (game.players.length < config.uno.minPlayers) {
       this._gameRepository.remove(game.id)
       return this._controller.sendMessage(game.id, fromText(this._locale.gameNotEnoughPlayers))
     }
@@ -159,6 +160,8 @@ export class PlayerController {
       if (!game.started) return
 
       const nextPlayer = game.turns.next()
+      this._eventManager.publish("player:turn", { game, player: nextPlayer })
+
       return fromText(this._locale.nextTurn(nextPlayer))
     }
   }

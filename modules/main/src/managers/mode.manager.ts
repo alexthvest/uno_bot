@@ -17,7 +17,7 @@ export class ModeManager {
    * @param inlineManager
    * @param modes
    */
-  constructor(inlineManager: InlineManager, ...modes: Mode[]) {
+  public constructor(inlineManager: InlineManager, ...modes: Mode[]) {
     this._inlineManager = inlineManager
     this._modes = modes
   }

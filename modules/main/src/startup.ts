@@ -1,4 +1,4 @@
-import { createScope, resolveController } from "@replikit/core"
+import { createScope } from "@replikit/core"
 import { router } from "@replikit/router"
 import {
   CardOptionType,
@@ -40,6 +40,7 @@ router.of("inline-query:received").use(async context => {
     if (game.modes.some(m => m.name === mode.name))
       return game.modes.remove(mode)
 
+    mode.enabled && mode.enabled({ game, player, events: eventManager })
     return game.modes.push(mode)
   }
 
@@ -53,5 +54,5 @@ router.of("inline-query:received").use(async context => {
   const message = await playerController.play(game, player, card)
 
   if (message !== undefined)
-    return resolveController("tg").sendMessage(game.id, message)
+    return context.controller.sendMessage(game.id, message)
 })

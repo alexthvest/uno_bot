@@ -12,9 +12,8 @@ export class TurnManager {
    *
    * @param playerRepository
    */
-  constructor(playerRepository: RepositoryBase<PlayerInfo>) {
+  public constructor(playerRepository: RepositoryBase<PlayerInfo>) {
     this._playerRepository = playerRepository
-    shuffle(this._playerRepository.all)
   }
 
   /**
@@ -31,6 +30,11 @@ export class TurnManager {
    * Reverses game turns
    */
   public reverse(): boolean { return this._reversed = !this._reversed }
+
+  /**
+   * Shuffles players
+   */
+  public shuffle(): void { shuffle(this._playerRepository.all) }
 
   /**
    * Passes move to next player

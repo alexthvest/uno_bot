@@ -1,3 +1,4 @@
+import "./extensions/config.extensions"
 import "./extensions/String.extensions"
 import "./extensions/Array.extensions"
 

@@ -1,11 +1,17 @@
 import { OutMessage, SendedMessage } from "@replikit/core/typings"
-import { CardColor, CardOptionType, CardSpecialType, CardType, DefaultLocale } from "@uno_bot/main"
+import { CardColor, CardOptionType, CardSpecialType, CardType, DefaultLocale, EventManager } from "@uno_bot/main"
 import { Card, GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
 
 export interface Mode {
   name: string
   description?: string
   rules: ModeRule[]
+
+  /**
+   * Invokes when mode is selected in menu
+   * @param context
+   */
+  enabled?(context: ModeEnabledContext): Promise<unknown> | unknown
 }
 
 export interface ModeRule {
@@ -45,4 +51,10 @@ export interface ModeRuleContext {
    * @param message
    */
   message(message: OutMessage): Promise<SendedMessage>
+}
+
+export interface ModeEnabledContext {
+  game: GameInfo
+  player: PlayerInfo
+  events: EventManager
 }

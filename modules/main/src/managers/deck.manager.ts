@@ -5,7 +5,7 @@ export class DeckManager {
   private _deck: Card[] = []
   private _discard: Card[] = []
 
-  constructor() {
+  public constructor() {
     const colors = [CardColor.Red, CardColor.Green, CardColor.Blue, CardColor.Yellow]
     const types = Object.values(CardType)
     const specialTypes = Object.values(CardSpecialType)
