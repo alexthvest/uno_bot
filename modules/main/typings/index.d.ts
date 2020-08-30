@@ -4,7 +4,6 @@ import "./extensions/String.extensions"
 
 export * from "./models/game.model"
 export * from "./models/player.model"
-export * from "./models/inline.model"
 export * from "./models/mode.model"
 
 export * from "./events/index.events"

@@ -2,7 +2,8 @@ import { resolveController } from "@replikit/core"
 import { locales } from "@replikit/i18n"
 import { isOptionCardType, isSpecialCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
-import { DefaultLocale, InlineManager } from "@uno_bot/main"
+import { InlineManager } from "@uno_bot/inline"
+import { DefaultLocale } from "@uno_bot/main"
 import { GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
 
 export class ModeManager {

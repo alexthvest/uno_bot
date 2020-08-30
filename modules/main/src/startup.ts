@@ -1,14 +1,8 @@
 import { createScope } from "@replikit/core"
 import { router } from "@replikit/router"
 import { CardOptionType } from "@uno_bot/cards"
-import {
-  DefaultLocale,
-  EventManager,
-  GameRepository,
-  InlineManager,
-  ModeManager,
-  PlayerController
-} from "@uno_bot/main"
+import { InlineManager } from "@uno_bot/inline"
+import { DefaultLocale, EventManager, GameRepository, ModeManager, PlayerController } from "@uno_bot/main"
 
 /** @internal */
 export const logger = createScope("main")

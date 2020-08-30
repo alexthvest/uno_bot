@@ -1,6 +1,6 @@
 import { InlineQueryChosenContext, InlineQueryReceivedContext, Router } from "@replikit/router"
 import { NextHandler } from "@replikit/router/typings"
-import { InlineEvent, InlineEventOptions, InlineQueryDataResult } from "@uno_bot/main/typings"
+import { InlineEvent, InlineEventOptions, InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { EventEmitter } from "events"
 import { v4 as uuid } from "uuid"
 

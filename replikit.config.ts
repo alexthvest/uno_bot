@@ -2,6 +2,7 @@ import { Configuration } from "@replikit/core/typings"
 
 import "@replikit/telegram"
 import "@uno_bot/cards"
+import "@uno_bot/inline"
 import "@uno_bot/main"
 
 const config: Configuration = {

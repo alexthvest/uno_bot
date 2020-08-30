@@ -3,10 +3,12 @@ import { locales } from "@replikit/i18n"
 import { InlineQueryReceivedContext } from "@replikit/router"
 import { CardColor, CardOptionType, createCard, getCardSticker, getColorEmoji } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
-import { DefaultLocale, InlineManager, ModeManager } from "@uno_bot/main"
-import { GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
+import { InlineManager } from "@uno_bot/inline"
+import { InlineQueryDataResult } from "@uno_bot/inline/typings"
+import { DefaultLocale, ModeManager } from "@uno_bot/main"
+import { GameInfo, Mode, PlayerInfo } from "@uno_bot/main/typings"
 
-declare module "../managers/inline.manager" {
+declare module "@uno_bot/inline" {
   export interface InlineManager {
     /**
      * Sends inline menu with game not found message
