@@ -1,5 +1,6 @@
 import { locales, ru } from "@replikit/i18n"
-import { ColorEmoji, DefaultLocale, displayAccountName, displayCardType, displayElapsedTime } from "@uno_bot/main"
+import { getColorEmoji } from "@uno_bot/cards"
+import { DefaultLocale, displayAccountName, displayCardType, displayElapsedTime } from "@uno_bot/main"
 
 locales.add("ru", DefaultLocale, {
   /**
@@ -14,11 +15,13 @@ locales.add("ru", DefaultLocale, {
   gameNotEnoughPlayers: "Недостаточно игроков чтобы начать игру",
   gameNotStarted: "Игра еще не началась",
   gameEnded: "Игра окончена!",
-  gameInfo: game => [
-    `Ход: ${displayAccountName(game.turns.turn!)}`,
-    `Последняя карта: ${ColorEmoji[game.previousCard!.color]} ${displayCardType(game.previousCard!)}`,
-    `Времени прошло: ${displayElapsedTime(game.startedAt!, game.turns.turn?.language || "en")}`
-  ].join("\n"),
+  gameInfo: game => {
+    return [
+      `Ход: ${displayAccountName(game.turns.turn!)}`,
+      `Последняя карта: ${getColorEmoji(game.previousCard!.color)} ${displayCardType(game.previousCard!)}`,
+      `Времени прошло: ${displayElapsedTime(game.startedAt!, game.turns.turn?.language || "en")}`
+    ].join("\n")
+  },
 
   /**
    * Player locales
@@ -29,7 +32,7 @@ locales.add("ru", DefaultLocale, {
   playerNotInGame: "Игрок не находится в игре",
   playerKicked: "Пользователь кикнут из игры",
   playerWon: (account, score) =>
-    `${displayAccountName(account)} победил!\nCчёт: ${score}`,
+    `${displayAccountName(account)} победил! (Cчёт: ${score})`,
   playerDraw: (account, count) =>
     `${displayAccountName(account)} берет ${ru.plural(count, "$ карту", "$ карты")}`,
   playerSkipTurn: account =>

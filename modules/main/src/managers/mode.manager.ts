@@ -1,7 +1,9 @@
 import { resolveController } from "@replikit/core"
 import { locales } from "@replikit/i18n"
-import { CardOptionType, CardSpecialType, CardType, DefaultLocale, InlineManager } from "@uno_bot/main"
-import { Card, GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
+import { isOptionCardType, isSpecialCardType } from "@uno_bot/cards"
+import { Card } from "@uno_bot/cards/typings"
+import { DefaultLocale, InlineManager } from "@uno_bot/main"
+import { GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
 
 export class ModeManager {
   private readonly _modes: Mode[]
@@ -28,13 +30,13 @@ export class ModeManager {
    * @param card
    */
   public playable(game: GameInfo, card: Card): boolean {
-    if (game.previousCard?.color !== card.color && game.previousCard?.types.default !== card.types.default &&
-      card.types.special === undefined && card.types.option === undefined)
+    if (game.previousCard?.color !== card.color && game.previousCard?.type !== card.type &&
+      !isSpecialCardType(card.type) && !isOptionCardType(card.type))
       return false
 
     const context = this.createContext(game, game.turns.turn!, card)
     return game.modes.every(mode => {
-      const rule = mode.rules.find(r => this.isValidCard(card, r.card))
+      const rule = mode.rules.find(r => r.card === card.type)
       return (rule && rule.playable) ? rule.playable(context) : true
     })
   }
@@ -46,8 +48,8 @@ export class ModeManager {
    * @param card
    */
   public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<void> {
-    const mode = game.modes.find(m => m.rules.some(rule => this.isValidCard(card, rule.card)))
-    const rule = mode?.rules.find(rule => this.isValidCard(card, rule.card))
+    const mode = game.modes.find(m => m.rules.some(rule => card.type === rule.card))
+    const rule = mode?.rules.find(rule => card.type === rule.card)
 
     if (rule && game.turns.turn) {
       const context = this.createContext(game, player, card)
@@ -69,14 +71,5 @@ export class ModeManager {
       inline: results => this._inlineManager.inline(player.id, { results }),
       inlineColors: () => this._inlineManager.inlineColors(game, player)
     }
-  }
-
-  /**
-   * Checks if card types equal
-   * @param card
-   * @param info
-   */
-  private isValidCard(card: Card, info: CardType | CardSpecialType | CardOptionType): boolean {
-    return info === card.types.default || info === card.types.special || info === card.types.option
   }
 }

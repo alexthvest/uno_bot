@@ -1,13 +1,4 @@
-export enum CardColor {
-  Red = "Red",
-  Green = "Green",
-  Blue = "Blue",
-  Yellow = "Yellow",
-  Black = "Black",
-  Option = "Option"
-}
-
-export enum CardType {
+export enum CardDefaultType {
   Zero = "zero",
   One = "one",
   Two = "two",
@@ -32,3 +23,5 @@ export enum CardOptionType {
   Draw = "draw",
   Pass = "pass"
 }
+
+export type CardType = CardDefaultType | CardSpecialType | CardOptionType

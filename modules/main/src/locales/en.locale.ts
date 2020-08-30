@@ -1,5 +1,6 @@
 import { locales, ru } from "@replikit/i18n"
-import { ColorEmoji, DefaultLocale, displayAccountName, displayCardType, displayElapsedTime } from "@uno_bot/main"
+import { getColorEmoji } from "@uno_bot/cards"
+import { DefaultLocale, displayAccountName, displayCardType, displayElapsedTime } from "@uno_bot/main"
 
 locales.add("en", DefaultLocale, {
   /**
@@ -16,7 +17,7 @@ locales.add("en", DefaultLocale, {
   gameEnded: "Game ended!",
   gameInfo: game => [
     `Turn: ${displayAccountName(game.turns.turn!)}`,
-    `Last card: ${ColorEmoji[game.previousCard!.color]} ${displayCardType(game.previousCard!)}`,
+    `Last card: ${getColorEmoji(game.previousCard!.color)} ${displayCardType(game.previousCard!)}`,
     `Time elapsed: ${displayElapsedTime(game.startedAt!, game.turns.turn?.language || "en")}`
   ].join("\n"),
 
@@ -29,7 +30,7 @@ locales.add("en", DefaultLocale, {
   playerNotInGame: "Player not in the game",
   playerKicked: "Player kicked from the game",
   playerWon: (account, score) =>
-    `${displayAccountName(account)} won the game!\nScore: ${score}`,
+    `${displayAccountName(account)} won the game! (Score: ${score})`,
   playerDraw: (account, count) =>
     `${displayAccountName(account)} drawing ${ru.plural(count, "$ card", "$ cards")}`,
   playerSkipTurn: account =>

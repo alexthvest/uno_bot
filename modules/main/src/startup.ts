@@ -1,7 +1,7 @@
 import { createScope } from "@replikit/core"
 import { router } from "@replikit/router"
+import { CardOptionType } from "@uno_bot/cards"
 import {
-  CardOptionType,
   DefaultLocale,
   EventManager,
   GameRepository,

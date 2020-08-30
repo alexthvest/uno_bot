@@ -3,9 +3,6 @@ export * from "./utils/display.utils"
 
 export * from "./locales/default.locale"
 
-export * from "./cards/types"
-export * from "./cards/stickers"
-
 export * from "./managers/event.manager"
 export * from "./managers/deck.manager"
 export * from "./managers/inline.manager"

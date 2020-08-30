@@ -1,6 +1,8 @@
 import { OutMessage, SendedMessage } from "@replikit/core/typings"
-import { CardColor, CardOptionType, CardSpecialType, CardType, DefaultLocale, EventManager } from "@uno_bot/main"
-import { Card, GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
+import { CardColor, CardType } from "@uno_bot/cards"
+import { Card } from "@uno_bot/cards/typings"
+import { DefaultLocale, EventManager } from "@uno_bot/main"
+import { GameInfo, InlineQueryDataResult, PlayerInfo } from "@uno_bot/main/typings"
 
 export interface Mode {
   name: string
@@ -15,7 +17,7 @@ export interface Mode {
 }
 
 export interface ModeRule {
-  card: CardType | CardSpecialType | CardOptionType
+  card: CardType
 
   /**
    * Checks if card is playable

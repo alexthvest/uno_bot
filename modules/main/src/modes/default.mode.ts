@@ -1,5 +1,5 @@
 import { fromText } from "@replikit/messages"
-import { CardOptionType, CardSpecialType, CardType } from "@uno_bot/main"
+import { CardDefaultType, CardOptionType, CardSpecialType } from "@uno_bot/cards"
 import { Mode } from "@uno_bot/main/typings"
 
 export const defaultMode: Mode = {
@@ -26,14 +26,14 @@ export const defaultMode: Mode = {
       }
     },
     {
-      card: CardType.Skip,
+      card: CardDefaultType.Skip,
       handle: async context => {
         const nextPlayer = context.game.turns.next()
         return context.message(fromText(context.locale.playerSkipTurn(nextPlayer)))
       }
     },
     {
-      card: CardType.Reverse,
+      card: CardDefaultType.Reverse,
       handle: context => {
         if (context.game.players.length === 2)
           return context.game.turns.next()
@@ -42,7 +42,7 @@ export const defaultMode: Mode = {
       }
     },
     {
-      card: CardType.DrawTwo,
+      card: CardDefaultType.DrawTwo,
       handle: async context => {
 
         const player = context.game.turns.next()

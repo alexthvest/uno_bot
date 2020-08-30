@@ -2,8 +2,10 @@ import { config, resolveController } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
-import { CardScores, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
-import { Card, GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
+import { getCardScore, isOptionCardType } from "@uno_bot/cards"
+import { Card } from "@uno_bot/cards/typings"
+import { DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
+import { GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -148,7 +150,7 @@ export class PlayerController {
 
     await this._modeManager.play(game, player, card)
 
-    if (card.types.option === undefined) {
+    if (!isOptionCardType(card.type)) {
       player.cards.remove(card)
 
       game.deck.discard(card)
@@ -182,7 +184,7 @@ export class PlayerController {
 
     const score = game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
       for (const card of player.cards) {
-        score += CardScores[card.types.default || card.types.special || ""]
+        score += getCardScore(card.type)
       }
       return score
     }, 0)

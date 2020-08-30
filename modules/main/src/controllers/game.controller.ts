@@ -2,7 +2,6 @@ import { AttachmentType, config } from "@replikit/core"
 import { AccountInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
-  CardStickers,
   DeckManager,
   DefaultLocale,
   defaultMode,
@@ -46,7 +45,7 @@ export class GameController {
     const game = this._gameRepository.get(channelId)
 
     if (game && moment().diff(game.createdAt, "seconds") < config.uno.createWaitTime)
-      return fromText(this._locale.timeHasNotPassed(2))
+      return fromText(this._locale.timeHasNotPassed(config.uno.createWaitTime))
 
     if (game && game.started)
       return fromText(this._locale.gameAlreadyStarted)
@@ -119,7 +118,6 @@ export class GameController {
     game.turns.shuffle()
 
     const card = game.deck.drawFirst()
-    const stickerId = CardStickers[card.color][card.types.default!][0]
 
     const controller = new PlayerController(this._gameRepository, this._eventManager, this._modeManager, this._locale)
     await controller.play(game, { id: -1, cards: [card] }, card)
@@ -132,7 +130,7 @@ export class GameController {
       .addLine(this._locale.gameStarted)
       .addLine(this._locale.nextTurn(game.turns.turn!))
       .addAttachment({
-        id: stickerId,
+        id: card.stickerId,
         type: AttachmentType.Sticker,
         controllerName: "tg"
       }).build()

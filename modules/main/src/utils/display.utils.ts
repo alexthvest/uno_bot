@@ -1,5 +1,5 @@
 import { AccountInfo } from "@replikit/core/typings"
-import { Card } from "@uno_bot/main/typings"
+import { Card } from "@uno_bot/cards/typings"
 import moment, { Moment } from "moment"
 
 /**
@@ -15,7 +15,7 @@ export function displayAccountName(account: AccountInfo): string {
  * @param card
  */
 export function displayCardType(card: Card): string {
-  return (card.types.default || card.types.special || "").capitalize()
+  return card.type.capitalize()
 }
 
 /**

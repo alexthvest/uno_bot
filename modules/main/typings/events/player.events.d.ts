@@ -1,4 +1,5 @@
-import { Card, GameInfo, PlayerInfo } from "@uno_bot/main/typings"
+import { Card } from "@uno_bot/cards/typings"
+import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 
 declare module "@uno_bot/main/typings/events/index.events" {
   export interface EventContextMap {

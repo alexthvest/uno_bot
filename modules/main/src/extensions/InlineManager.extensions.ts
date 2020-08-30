@@ -1,16 +1,10 @@
 import { AttachmentType } from "@replikit/core"
 import { locales } from "@replikit/i18n"
 import { InlineQueryReceivedContext } from "@replikit/router"
-import {
-  CardColor,
-  CardOptionType,
-  CardStickers,
-  ColorEmoji,
-  DefaultLocale,
-  InlineManager,
-  ModeManager
-} from "@uno_bot/main"
-import { Card, GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
+import { CardColor, CardOptionType, createCard, getCardSticker, getColorEmoji } from "@uno_bot/cards"
+import { Card } from "@uno_bot/cards/typings"
+import { DefaultLocale, InlineManager, ModeManager } from "@uno_bot/main"
+import { GameInfo, InlineQueryDataResult, Mode, PlayerInfo } from "@uno_bot/main/typings"
 
 declare module "../managers/inline.manager" {
   export interface InlineManager {
@@ -92,13 +86,11 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
   const locale = context.getLocale(DefaultLocale)
   const cards: InlineQueryDataResult<Card>[] = player.cards.map((card, index) => {
     const playable = modeManager.playable(game, card)
-    const stickers = CardStickers[card.color][card.types.default || card.types.special || ""]
-
     return {
       id: `${game.id}_${player.id}_${index}`,
       data: card,
       attachment: {
-        id: stickers[playable ? 0 : 1],
+        id: getCardSticker(card.color, card.type, !playable),
         type: AttachmentType.Sticker
       },
       ...((game.turns.turn?.id !== player.id || !playable) && {
@@ -111,12 +103,14 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
 
   const optionCards: InlineQueryDataResult<Card>[] = []
   for (const optionType of optionTypes) {
-    const optionCard: Card = { color: CardColor.Option, types: { option: optionType } }
-    if (modeManager.playable(game, optionCard)) optionCards.push({
+    const optionCard = createCard(CardColor.Option, optionType)
+    if (!modeManager.playable(game, optionCard)) continue
+
+    optionCards.push({
       id: optionType.toString(),
       data: optionCard,
       attachment: {
-        id: CardStickers[optionCard.color][optionType][0],
+        id: optionCard.stickerId,
         type: AttachmentType.Sticker
       }
     })
@@ -154,7 +148,7 @@ InlineManager.prototype.inlineColors = async function (game, player) {
 
   const colorResults = colors.map(color => {
     const name = color.toString().capitalize()
-    const emoji = ColorEmoji[color]
+    const emoji = getColorEmoji(color)
 
     return {
       id: color,
@@ -169,7 +163,7 @@ InlineManager.prototype.inlineColors = async function (game, player) {
     data: "info",
     article: {
       title: locale.yourCardsTitle,
-      description: player.cards.map(c => ColorEmoji[c.color]).join("")
+      description: player.cards.map(c => getColorEmoji(c.color)).join("")
     },
     message: {
       text: locale.gameInfo(game)

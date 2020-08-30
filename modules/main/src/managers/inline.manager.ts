@@ -12,7 +12,7 @@ export class InlineManager {
    *
    * @param router
    */
-  constructor(router: Router) {
+  public constructor(router: Router) {
     router.of("inline-query:received").use(this.onInlineQueryReceived.bind(this))
     router.of("inline-query:chosen").use(this.onInlineQueryChosen.bind(this))
   }
