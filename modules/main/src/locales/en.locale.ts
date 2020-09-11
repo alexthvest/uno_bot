@@ -55,6 +55,6 @@ locales.add("en", DefaultLocale, {
   noKickTarget: "No user to kick was found, reply user message to kick him",
   nextTurn: account =>
     `Next turn: ${displayAccountName(account)} (@${account.username})`,
-  timeHasNotPassed: minutes =>
-    `A new game can only be created ${ru.plural(minutes, "$ minute", "$ minutes")} after creation`
+  timeHasNotPassed: seconds =>
+    `A new game can only be created ${ru.plural(seconds, "$ second", "$ seconds")} after creation`
 })

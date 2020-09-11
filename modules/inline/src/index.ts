@@ -1,4 +1,5 @@
 import { InlineQueryChosenContext, InlineQueryReceivedContext, Router } from "@replikit/router"
+import { Identifier } from "@replikit/core/typings"
 import { NextHandler } from "@replikit/router/typings"
 import { InlineEvent, InlineEventOptions, InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { EventEmitter } from "events"
@@ -22,13 +23,15 @@ export class InlineManager {
    * @param accountId
    * @param options
    */
-  public inline<T>(accountId: number, options: InlineEventOptions<T>): Promise<T> {
+  public inline<T>(accountId: Identifier, options: InlineEventOptions<T>): Promise<T> {
     return new Promise(resolve => {
       const event: InlineEvent<T> = { id: uuid(), accountId, results: options.results, once: options.once }
       this._storage.push(event)
 
       this._emitter.once(event.id, (data: T) => {
-        this._storage.remove(event)
+        const index = this._storage.indexOf(event)
+        this._storage.splice(index, 1)
+
         return resolve(data)
       })
     })
@@ -41,7 +44,7 @@ export class InlineManager {
    */
   public async inlineWithContext<T>(context: InlineQueryReceivedContext, results: InlineQueryDataResult<T>[]): Promise<T> {
     const result = this.inline(context.account.id, { results, once: true })
-    await this.onInlineQueryReceived(context, () => {})
+    await this.onInlineQueryReceived(context, () => { })
 
     return result
   }
@@ -53,7 +56,9 @@ export class InlineManager {
   public removeEvents(accountId: number): void {
     this._storage.filter(e => e.accountId === accountId).forEach(event => {
       this._emitter.removeAllListeners(event.id)
-      this._storage.remove(event)
+
+      const index = this._storage.indexOf(event)
+      this._storage.splice(index, 1)
     })
   }
 
@@ -68,7 +73,9 @@ export class InlineManager {
     if (event === undefined) return next()
 
     if (event.once && event.showed) {
-      this._storage.remove(event)
+      const index = this._storage.indexOf(event)
+      this._storage.splice(index, 1)
+
       return next()
     }
 

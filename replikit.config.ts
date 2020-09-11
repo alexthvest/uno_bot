@@ -10,8 +10,8 @@ const config: Configuration = {
     token: process.env.TOKEN!
   },
   uno: {
-    minPlayers: 2,
-    createWaitTime: 120
+    createWaitTime: 120,
+    minPlayers: 2
   }
 }
 

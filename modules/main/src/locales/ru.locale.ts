@@ -57,6 +57,6 @@ locales.add("ru", DefaultLocale, {
   noKickTarget: "Пользователь не найден, ответьте на сообщение чтобы кикнуть игрока",
   nextTurn: account =>
     `Следующий игрок: ${displayAccountName(account)} (@${account.username})`,
-  timeHasNotPassed: minutes =>
-    `Новую игру можно создать только через  ${ru.plural(minutes, "$ минута", "$ минуты", "$ минут")} после создания`
+  timeHasNotPassed: seconds =>
+    `Новую игру можно создать только через ${ru.plural(seconds, "$ секунда", "$ секунды", "$ секунд")} после создания`
 })

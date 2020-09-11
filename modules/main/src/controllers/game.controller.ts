@@ -1,5 +1,5 @@
 import { AttachmentType, config } from "@replikit/core"
-import { AccountInfo, OutMessage } from "@replikit/core/typings"
+import { AccountInfo, OutMessage, Identifier } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
   DeckManager,
@@ -29,7 +29,7 @@ export class GameController {
    * @param locale
    */
   public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
-                     modeManager: ModeManager, locale: DefaultLocale) {
+    modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._modeManager = modeManager
     this._eventManager = eventManager
@@ -41,7 +41,7 @@ export class GameController {
    * @param channelId
    * @param account
    */
-  public create(channelId: number, account: AccountInfo): OutMessage {
+  public create(channelId: Identifier, account: AccountInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game && moment().diff(game.createdAt, "seconds") < config.uno.createWaitTime)
@@ -76,7 +76,7 @@ export class GameController {
    * @param channelId
    * @param account
    */
-  public close(channelId: number, account: AccountInfo): OutMessage {
+  public close(channelId: Identifier, account: AccountInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -98,7 +98,7 @@ export class GameController {
    * @param channelId
    * @param account
    */
-  public async start(channelId: number, account: AccountInfo): Promise<OutMessage> {
+  public async start(channelId: Identifier, account: AccountInfo): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -141,7 +141,7 @@ export class GameController {
    * @param channelId
    * @param player
    */
-  public end(channelId: number, player: PlayerInfo): OutMessage {
+  public end(channelId: Identifier, player: PlayerInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)

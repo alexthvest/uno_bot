@@ -1,5 +1,5 @@
 import { config, resolveController } from "@replikit/core"
-import { AccountInfo, OutMessage } from "@replikit/core/typings"
+import { AccountInfo, OutMessage, Identifier } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
@@ -23,7 +23,7 @@ export class PlayerController {
    * @param locale
    */
   public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
-                     modeManager: ModeManager, locale: DefaultLocale) {
+    modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
@@ -37,7 +37,7 @@ export class PlayerController {
    * @param channelId
    * @param account
    */
-  public join(channelId: number, account: AccountInfo): OutMessage {
+  public join(channelId: Identifier, account: AccountInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -66,7 +66,7 @@ export class PlayerController {
    * @param channelId
    * @param accountId
    */
-  public async leave(channelId: number, accountId: number): Promise<OutMessage> {
+  public async leave(channelId: Identifier, accountId: Identifier): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -111,7 +111,7 @@ export class PlayerController {
    * @param account
    * @param target
    */
-  public async kick(channelId: number, account: AccountInfo, target: AccountInfo | undefined): Promise<OutMessage> {
+  public async kick(channelId: Identifier, account: AccountInfo, target: AccountInfo | undefined): Promise<OutMessage> {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)
@@ -173,7 +173,7 @@ export class PlayerController {
    * @param channelId
    * @param player
    */
-  public won(channelId: number, player: PlayerInfo): OutMessage {
+  public won(channelId: Identifier, player: PlayerInfo): OutMessage {
     const game = this._gameRepository.get(channelId)
 
     if (game === undefined)

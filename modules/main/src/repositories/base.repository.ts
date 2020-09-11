@@ -1,4 +1,4 @@
-import { HasId } from "@replikit/core/typings"
+import { HasId, Identifier } from "@replikit/core/typings"
 
 export abstract class RepositoryBase<T extends HasId> {
   /**
@@ -20,7 +20,7 @@ export abstract class RepositoryBase<T extends HasId> {
    * Gets item by id
    * @param id
    */
-  public get(id: number): T | undefined {
+  public get(id: Identifier): T | undefined {
     return this._items.find(item => item.id === id)
   }
 
@@ -37,7 +37,7 @@ export abstract class RepositoryBase<T extends HasId> {
    * Removes item from repository
    * @param id
    */
-  public remove(id: number): boolean {
+  public remove(id: Identifier): boolean {
     const index = this._items.findIndex(game => game.id === id)
     if (index === -1) return false
 
@@ -49,7 +49,7 @@ export abstract class RepositoryBase<T extends HasId> {
    * Checks if repository contains item
    * @param id
    */
-  public contains(id: number): boolean {
+  public contains(id: Identifier): boolean {
     return this._items.some(game => game.id === id)
   }
 

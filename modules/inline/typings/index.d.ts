@@ -1,8 +1,8 @@
-import { InlineQueryResult } from "@replikit/core/typings"
+import { InlineQueryResult, Identifier } from "@replikit/core/typings"
 
 export interface InlineEvent<T> {
   id: string
-  accountId: number
+  accountId: Identifier
   results: InlineQueryDataResult<T>[]
 
   once?: boolean

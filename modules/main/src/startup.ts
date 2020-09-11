@@ -1,8 +1,18 @@
-import { createScope } from "@replikit/core"
+import { createScope, updateConfig } from "@replikit/core"
 import { router } from "@replikit/router"
 import { CardOptionType } from "@uno_bot/cards"
 import { InlineManager } from "@uno_bot/inline"
 import { DefaultLocale, EventManager, GameRepository, ModeManager, PlayerController } from "@uno_bot/main"
+
+/**
+ * Sets default values for configuration
+ */
+updateConfig({
+  uno: {
+    createWaitTime: 120,
+    minPlayers: 2
+  }
+})
 
 /** @internal */
 export const logger = createScope("main")
