@@ -7,6 +7,7 @@ import { Moment } from "moment"
 export interface GameInfo extends HasId {
   ownerId: Identifier
   previousCard?: Card
+  score: number
 
   players: RepositoryBase<PlayerInfo>
   modes: Mode[]

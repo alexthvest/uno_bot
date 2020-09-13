@@ -30,13 +30,6 @@ export class DeckManager {
   }
 
   /**
-   * Returns true if deck is empty
-   */
-  public get empty(): boolean {
-    return this._deck.length === 0 && this._discard.length === 0
-  }
-
-  /**
    * Discards cards to discard deck
    */
   public discard(...cards: Card[]): void {

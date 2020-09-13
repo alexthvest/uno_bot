@@ -56,6 +56,7 @@ export class GameController {
     this._gameRepository.add({
       id: channelId,
       ownerId: account.id,
+      score: 0,
       players: playerRepository,
       modes: [defaultMode],
       deck: new DeckManager(),

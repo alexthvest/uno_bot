@@ -1,5 +1,5 @@
 import { config, resolveController } from "@replikit/core"
-import { AccountInfo, OutMessage, Identifier } from "@replikit/core/typings"
+import { AccountInfo, Identifier, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
@@ -23,7 +23,7 @@ export class PlayerController {
    * @param locale
    */
   public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
-    modeManager: ModeManager, locale: DefaultLocale) {
+                     modeManager: ModeManager, locale: DefaultLocale) {
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
@@ -46,8 +46,8 @@ export class PlayerController {
     if (this._gameRepository.has(game => game.players.contains(account.id)))
       return fromText(this._locale.playerAlreadyJoined)
 
-    if (game.deck.empty)
-      return fromText(this._locale.deckIsEmpty)
+    if (game.started)
+      return fromText(this._locale.gameAlreadyStarted)
 
     const player = game.players.add({
       ...account,
@@ -90,19 +90,27 @@ export class PlayerController {
    * Handles player left event
    * @param context
    */
-  private onPlayerLeft(context: PlayerLeftContext): Promise<unknown> {
+  private onPlayerLeft(context: PlayerLeftContext): Promise<unknown> | unknown {
     const { game } = context
 
     if (!game.started)
-      return Promise.resolve()
+      return
 
-    if (game.players.length < config.uno.minPlayers) {
-      this._gameRepository.remove(game.id)
-      return this._controller.sendMessage(game.id, fromText(this._locale.gameNotEnoughPlayers))
+    for (const card of context.player.cards) {
+      game.score += getCardScore(card.type)
     }
 
-    const nextPlayer = game.turns.next()
-    return this._controller.sendMessage(game.id, fromText(this._locale.nextTurn(nextPlayer)))
+    if (game.players.length < config.uno.minPlayers) {
+      const wonMessage = this.won(game.id, game.players.all[0])
+      this._gameRepository.remove(game.id)
+
+      return this._controller.sendMessage(game.id, wonMessage)
+    }
+
+    if (game.turns.turn?.id === context.player.id) {
+      const nextPlayer = game.turns.next()
+      return this._controller.sendMessage(game.id, fromText(this._locale.nextTurn(nextPlayer)))
+    }
   }
 
   /**
@@ -182,15 +190,15 @@ export class PlayerController {
     if (!game.started)
       return fromText(this._locale.gameNotStarted)
 
-    const score = game.players.all.reduce((score, player) => {
+    game.score += game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
       for (const card of player.cards) {
         score += getCardScore(card.type)
       }
       return score
     }, 0)
 
-    this._eventManager.publish("player:won", { game, player, score })
-    return fromText(this._locale.playerWon(player, score))
+    this._eventManager.publish("player:won", { game, player, score: game.score })
+    return fromText(this._locale.playerWon(player, game.score))
   }
 
   /**
