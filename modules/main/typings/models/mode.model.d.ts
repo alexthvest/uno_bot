@@ -1,9 +1,9 @@
 import { OutMessage, SendedMessage } from "@replikit/core/typings"
 import { CardColor, CardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
+import { InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { DefaultLocale, EventManager } from "@uno_bot/main"
 import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
-import { InlineQueryDataResult } from "@uno_bot/inline/typings"
 
 export interface Mode {
   name: string

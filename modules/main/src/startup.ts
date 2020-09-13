@@ -1,8 +1,14 @@
 import { createScope, updateConfig } from "@replikit/core"
 import { router } from "@replikit/router"
 import { CardOptionType } from "@uno_bot/cards"
-import { InlineManager } from "@uno_bot/inline"
-import { DefaultLocale, EventManager, GameRepository, ModeManager, PlayerController } from "@uno_bot/main"
+import {
+  DefaultLocale,
+  EventManager,
+  GameRepository,
+  ModeManager,
+  PlayerController,
+  UnoInlineManager
+} from "@uno_bot/main"
 
 /**
  * Sets default values for configuration
@@ -24,7 +30,7 @@ export const gameRepository = new GameRepository()
 export const eventManager = new EventManager()
 
 /** @internal */
-export const inlineManager = new InlineManager(router)
+export const inlineManager = new UnoInlineManager(router)
 
 /** @internal */
 export const modeManager = new ModeManager(inlineManager)

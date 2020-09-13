@@ -11,7 +11,7 @@ const config: Configuration = {
   },
   uno: {
     createWaitTime: 120,
-    minPlayers: 2
+    minPlayers: 1
   }
 }
 

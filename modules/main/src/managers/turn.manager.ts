@@ -34,7 +34,7 @@ export class TurnManager {
   /**
    * Shuffles players
    */
-  public shuffle(): void { shuffle(this._playerRepository.all) }
+  public shuffle(): PlayerInfo[] { return shuffle(this._playerRepository.all) }
 
   /**
    * Passes move to next player

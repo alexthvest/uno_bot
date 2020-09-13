@@ -44,13 +44,12 @@ export const defaultMode: Mode = {
     {
       card: CardDefaultType.DrawTwo,
       handle: async context => {
-
         const player = context.game.turns.next()
         const cards = context.game.deck.drawFew(2)
 
         player.cards.push(...cards)
-        await context.message(fromText(context.locale.playerSkipTurn(player)))
 
+        await context.message(fromText(context.locale.playerSkipTurn(player)))
         return context.message(fromText(context.locale.playerDraw(player, 2)))
       }
     },

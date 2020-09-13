@@ -1,5 +1,5 @@
-import { InlineQueryChosenContext, InlineQueryReceivedContext, Router } from "@replikit/router"
 import { Identifier } from "@replikit/core/typings"
+import { InlineQueryChosenContext, InlineQueryReceivedContext, Router } from "@replikit/router"
 import { NextHandler } from "@replikit/router/typings"
 import { InlineEvent, InlineEventOptions, InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { EventEmitter } from "events"
@@ -47,19 +47,6 @@ export class InlineManager {
     await this.onInlineQueryReceived(context, () => { })
 
     return result
-  }
-
-  /**
-   * Clears all events by account id
-   * @param accountId
-   */
-  public removeEvents(accountId: number): void {
-    this._storage.filter(e => e.accountId === accountId).forEach(event => {
-      this._emitter.removeAllListeners(event.id)
-
-      const index = this._storage.indexOf(event)
-      this._storage.splice(index, 1)
-    })
   }
 
   /**

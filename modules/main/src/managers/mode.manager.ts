@@ -2,13 +2,12 @@ import { resolveController } from "@replikit/core"
 import { locales } from "@replikit/i18n"
 import { isOptionCardType, isSpecialCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
-import { InlineManager } from "@uno_bot/inline"
-import { DefaultLocale } from "@uno_bot/main"
+import { DefaultLocale, UnoInlineManager } from "@uno_bot/main"
 import { GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
 
 export class ModeManager {
   private readonly _modes: Mode[]
-  private readonly _inlineManager: InlineManager
+  private readonly _inlineManager: UnoInlineManager
 
   /**
    * Returns all registered modes
@@ -20,7 +19,7 @@ export class ModeManager {
    * @param inlineManager
    * @param modes
    */
-  public constructor(inlineManager: InlineManager, ...modes: Mode[]) {
+  public constructor(inlineManager: UnoInlineManager, ...modes: Mode[]) {
     this._inlineManager = inlineManager
     this._modes = modes
   }

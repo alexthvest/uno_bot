@@ -13,6 +13,7 @@ export * from "./managers/event.manager"
 export * from "./managers/deck.manager"
 export * from "./managers/turn.manager"
 export * from "./managers/mode.manager"
+export * from "./managers/inline.manager"
 
 /**
  * Commands
@@ -28,7 +29,6 @@ import "./commands/start.command"
  * Extensions
  */
 import "./extensions/Array.extensions"
-import "./extensions/InlineManager.extensions"
 import "./extensions/String.extensions"
 
 /**
