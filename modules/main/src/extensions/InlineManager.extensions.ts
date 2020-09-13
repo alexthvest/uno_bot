@@ -89,7 +89,7 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
   const cards: InlineQueryDataResult<Card>[] = player.cards.map((card, index) => {
     const playable = modeManager.playable(game, card)
     return {
-      id: playable ? `${game.id}_${player.id}_${index}` : "info",
+      id: `${game.id}_${player.id}_${index}`,
       data: card,
       attachment: {
         id: getCardSticker(card.color, card.type, !playable),
