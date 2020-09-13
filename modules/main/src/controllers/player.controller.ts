@@ -4,10 +4,10 @@ import { fromText } from "@replikit/messages"
 import { TelegramController } from "@replikit/telegram"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
-import { DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
+import { ControllerBase, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
 import { GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
-export class PlayerController {
+export class PlayerController extends ControllerBase {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
@@ -22,14 +22,16 @@ export class PlayerController {
    * @param modeManager
    * @param locale
    */
-  public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
-                     modeManager: ModeManager, locale: DefaultLocale) {
+  public constructor(
+    gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
+    modeManager: ModeManager, locale: DefaultLocale
+  ) {
+    super()
+
     this._gameRepository = gameRepository
     this._eventManager = eventManager
     this._modeManager = modeManager
     this._locale = locale
-
-    this._controller = resolveController("tg")
   }
 
   /**
@@ -104,12 +106,12 @@ export class PlayerController {
       const wonMessage = this.won(game.id, game.players.all[0])
       this._gameRepository.remove(game.id)
 
-      return this._controller.sendMessage(game.id, wonMessage)
+      return this.message(game.id, wonMessage)
     }
 
     if (game.turns.turn?.id === context.player.id) {
       const nextPlayer = game.turns.next()
-      return this._controller.sendMessage(game.id, fromText(this._locale.nextTurn(nextPlayer)))
+      return this.message(game.id, fromText(this._locale.nextTurn(nextPlayer)))
     }
   }
 
@@ -214,12 +216,12 @@ export class PlayerController {
       const wonMessage = this.won(game.id, player)
       const endMessage = gameController.end(game.id, player)
 
-      await this._controller.sendMessage(game.id, wonMessage)
-      return this._controller.sendMessage(game.id, endMessage)
+      await this.message(game.id, wonMessage)
+      return this.message(game.id, endMessage)
     }
 
     if (game.turns.turn && player.cards.length === 1) {
-      return this._controller.sendMessage(game.id, fromText(this._locale.uno))
+      return this.message(game.id, fromText(this._locale.uno))
     }
   }
 }

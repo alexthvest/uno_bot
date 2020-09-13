@@ -1,7 +1,8 @@
 import { AttachmentType, config } from "@replikit/core"
-import { AccountInfo, OutMessage, Identifier } from "@replikit/core/typings"
+import { AccountInfo, Identifier, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
+  ControllerBase,
   DeckManager,
   DefaultLocale,
   defaultMode,
@@ -15,7 +16,7 @@ import {
 import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
 
-export class GameController {
+export class GameController extends ControllerBase {
   private readonly _gameRepository: RepositoryBase<GameInfo>
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
@@ -28,8 +29,12 @@ export class GameController {
    * @param modeManager
    * @param locale
    */
-  public constructor(gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
-    modeManager: ModeManager, locale: DefaultLocale) {
+  public constructor(
+    gameRepository: RepositoryBase<GameInfo>, eventManager: EventManager,
+    modeManager: ModeManager, locale: DefaultLocale
+  ) {
+    super()
+
     this._gameRepository = gameRepository
     this._modeManager = modeManager
     this._eventManager = eventManager

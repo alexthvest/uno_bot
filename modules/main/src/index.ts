@@ -47,6 +47,7 @@ export * from "./repositories/player.repository"
 /**
  * Controllers
  */
+export * from "./controllers/base.controller"
 export * from "./controllers/game.controller"
 export * from "./controllers/player.controller"
 
