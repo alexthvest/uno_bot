@@ -15,10 +15,10 @@ locales.add("en", DefaultLocale, {
   gameNotEnoughPlayers: "Not enough players to start the game",
   gameNotStarted: "Game not started yet",
   gameEnded: "Game ended!",
-  gameInfo: game => [
+  gameInfo: (game, account) => [
     `Turn: ${displayAccountName(game.turns.turn!)}`,
     `Last card: ${getColorEmoji(game.previousCard!.color)} ${displayCardType(game.previousCard!)}`,
-    `Time elapsed: ${displayElapsedTime(game.startedAt!, game.turns.turn?.language || "en")}`
+    `Time elapsed: ${displayElapsedTime(game.startedAt!, account.language || "en")}`
   ].join("\n"),
 
   /**

@@ -15,11 +15,11 @@ locales.add("ru", DefaultLocale, {
   gameNotEnoughPlayers: "Недостаточно игроков чтобы начать игру",
   gameNotStarted: "Игра еще не началась",
   gameEnded: "Игра окончена!",
-  gameInfo: game => {
+  gameInfo: (game, account) => {
     return [
       `Ход: ${displayAccountName(game.turns.turn!)}`,
       `Последняя карта: ${getColorEmoji(game.previousCard!.color)} ${displayCardType(game.previousCard!)}`,
-      `Времени прошло: ${displayElapsedTime(game.startedAt!, game.turns.turn?.language || "en")}`
+      `Времени прошло: ${displayElapsedTime(game.startedAt!, account.language || "en")}`
     ].join("\n")
   },
 

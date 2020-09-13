@@ -16,7 +16,7 @@ export class DefaultLocale {
   public gameNotEnoughPlayers: string
   public gameNotStarted: string
   public gameEnded: string
-  public gameInfo: (game: GameInfo) => string
+  public gameInfo: (game: GameInfo, account: AccountInfo) => string
 
   /**
    * Player locales

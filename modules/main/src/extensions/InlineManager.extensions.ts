@@ -97,7 +97,7 @@ InlineManager.prototype.inlineCardsWithContext = function (context, game, player
       },
       ...((game.turns.turn?.id !== player.id || !playable) && {
         message: {
-          text: locale.gameInfo(game)
+          text: locale.gameInfo(game, player)
         }
       })
     }
@@ -168,7 +168,7 @@ InlineManager.prototype.inlineColors = async function (game, player) {
       description: player.cards.map(c => getColorEmoji(c.color)).join("")
     },
     message: {
-      text: locale.gameInfo(game)
+      text: locale.gameInfo(game, player)
     }
   }]
 
