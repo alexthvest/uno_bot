@@ -24,6 +24,6 @@ export function displayCardType(card: Card): string {
  * @param language
  */
 export function displayElapsedTime(start: Moment, language: string): string {
-  moment.locale(language)
-  return moment.duration(moment().diff(start)).humanize()
+  const duration = moment.duration(moment().diff(start)).asMilliseconds()
+  return moment.utc(duration).format("HH:mm:ss")
 }
