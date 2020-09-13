@@ -143,7 +143,7 @@ export class PlayerController {
    */
   public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<OutMessage | undefined> {
     if (player.id !== -1 && game.turns.turn?.id !== player.id)
-      return fromText(this._locale.gameInfo(game))
+      return
 
     if (player.id !== -1 && !this._modeManager.playable(game, card))
       return
@@ -182,7 +182,7 @@ export class PlayerController {
     if (!game.started)
       return fromText(this._locale.gameNotStarted)
 
-    const score = game.players.all.filter(p => p.id !== player.id).reduce((score, player) => {
+    const score = game.players.all.reduce((score, player) => {
       for (const card of player.cards) {
         score += getCardScore(card.type)
       }
