@@ -15,6 +15,7 @@ import {
 } from "@uno_bot/main"
 import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
+import { ModeRepository } from "../repositories/mode.repository"
 
 export class GameController extends ControllerBase {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -56,15 +57,21 @@ export class GameController extends ControllerBase {
       return fromText(this._locale.gameAlreadyStarted)
 
     const playerRepository = new PlayerRepository()
-    this._gameRepository.remove(channel.id)
+    const modeRepository = new ModeRepository(defaultMode)
 
+    const deckManager = new DeckManager()
+    const turnManager = new TurnManager(playerRepository)
+
+    this._gameRepository.remove(channel.id)
     this._gameRepository.add({
-      id: channel.id, channel,
-      owner: account, score: 0,
+      id: channel.id,
+      channel,
+      owner: account,
+      score: 0,
       players: playerRepository,
-      modes: [defaultMode],
-      deck: new DeckManager(),
-      turns: new TurnManager(playerRepository),
+      modes: modeRepository,
+      deck: deckManager,
+      turns: turnManager,
       createdAt: moment()
     })
 

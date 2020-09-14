@@ -47,11 +47,11 @@ router.of("inline-query:received").use(async context => {
   if (game.owner.id === context.account.id && modeManager.modes.length && !game.started) {
     const mode = await inlineManager.inlineModesWithContext(context, game, modeManager.modes)
 
-    if (game.modes.some(m => m.name === mode.name))
-      return game.modes.remove(mode)
+    if (game.modes.contains(mode.id))
+      return game.modes.remove(mode.id)
 
     mode.enabled && mode.enabled({ game, player, events: eventManager })
-    return game.modes.push(mode)
+    return game.modes.add(mode)
   }
 
   if (!game.started)

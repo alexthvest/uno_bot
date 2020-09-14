@@ -12,7 +12,7 @@ export interface GameInfo extends HasId {
   score: number
 
   players: RepositoryBase<PlayerInfo>
-  modes: Mode[]
+  modes: RepositoryBase<Mode>
 
   deck: DeckManager
   turns: TurnManager

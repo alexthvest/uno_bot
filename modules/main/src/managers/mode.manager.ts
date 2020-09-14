@@ -35,7 +35,7 @@ export class ModeManager {
       return false
 
     const context = this.createContext(game, game.turns.turn!, card)
-    return game.modes.every(mode => {
+    return game.modes.all.every(mode => {
       const rule = mode.rules.find(r => r.card === card.type)
       return (rule && rule.playable) ? rule.playable(context) : true
     })
@@ -48,7 +48,7 @@ export class ModeManager {
    * @param card
    */
   public async play(game: GameInfo, player: PlayerInfo, card: Card): Promise<void> {
-    const mode = game.modes.find(m => m.rules.some(rule => card.type === rule.card))
+    const mode = game.modes.all.find(m => m.rules.some(rule => card.type === rule.card))
     const rule = mode?.rules.find(rule => card.type === rule.card)
 
     if (rule && game.turns.turn) {

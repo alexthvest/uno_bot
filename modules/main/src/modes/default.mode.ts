@@ -3,7 +3,7 @@ import { CardDefaultType, CardOptionType, CardSpecialType } from "@uno_bot/cards
 import { Mode } from "@uno_bot/main/typings"
 
 export const defaultMode: Mode = {
-  name: "default",
+  id: "default",
   rules: [
     {
       card: CardOptionType.Pass,

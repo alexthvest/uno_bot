@@ -112,11 +112,11 @@ export class UnoInlineManager extends InlineManager {
   public inlineModesWithContext(context: InlineQueryReceivedContext, game: GameInfo, modes: Mode[]): Promise<Mode> {
     const locale = context.getLocale(DefaultLocale)
     return this.inlineWithContext(context, modes.map(mode => {
-      const name = mode.name.capitalize()
-      const icon = game.modes.some(m => m.name === mode.name) ? "✅" : "❌"
+      const name = mode.id.toString().capitalize()
+      const icon = game.modes.contains(mode.id) ? "✅" : "❌"
 
       return {
-        id: mode.name,
+        id: name,
         data: mode,
         article: {
           title: `${icon} ${name}`,

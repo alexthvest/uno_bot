@@ -17,6 +17,14 @@ export abstract class RepositoryBase<T extends HasId> {
   public get length(): number { return this._items.length }
 
   /**
+   *
+   * @param items
+   */
+  public constructor(...items: T[]) {
+    this._items = items
+  }
+
+  /**
    * Gets item by id
    * @param id
    */
