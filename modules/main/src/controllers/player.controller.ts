@@ -155,24 +155,26 @@ export class PlayerController extends ControllerBase {
     if (player.id !== -1 && !this._modeManager.playable(game, card))
       return
 
+    if (isOptionCardType(card.type)) {
+      await this._modeManager.play(game, player, card)
+      return
+    }
+
+    player.cards.remove(card)
+    game.deck.discard(card)
+    game.previousCard = card
+
     await this._modeManager.play(game, player, card)
 
-    if (!isOptionCardType(card.type)) {
-      player.cards.remove(card)
+    this._eventManager.subscribeOnce("player:card:played", this.onCardPlayed.bind(this))
+    this._eventManager.publish("player:card:played", { game, player, card })
 
-      game.deck.discard(card)
-      game.previousCard = card
+    if (!game.started) return
 
-      this._eventManager.subscribeOnce("player:card:played", this.onCardPlayed.bind(this))
-      this._eventManager.publish("player:card:played", { game, player, card })
+    const nextPlayer = game.turns.next()
+    this._eventManager.publish("player:turn", { game, player: nextPlayer })
 
-      if (!game.started) return
-
-      const nextPlayer = game.turns.next()
-      this._eventManager.publish("player:turn", { game, player: nextPlayer })
-
-      return fromText(this._locale.nextTurn(nextPlayer))
-    }
+    return fromText(this._locale.nextTurn(nextPlayer))
   }
 
   /**
