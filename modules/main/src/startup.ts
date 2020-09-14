@@ -44,7 +44,7 @@ router.of("inline-query:received").use(async context => {
   if (game === undefined)
     return inlineManager.inlineNotInGameWithContext(context)
 
-  if (game.ownerId === context.account.id && modeManager.modes.length && !game.started) {
+  if (game.owner.id === context.account.id && modeManager.modes.length && !game.started) {
     const mode = await inlineManager.inlineModesWithContext(context, game, modeManager.modes)
 
     if (game.modes.some(m => m.name === mode.name))

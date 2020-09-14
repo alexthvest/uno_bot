@@ -1,5 +1,5 @@
 import { AttachmentType, config } from "@replikit/core"
-import { AccountInfo, Identifier, OutMessage } from "@replikit/core/typings"
+import { AccountInfo, ChannelInfo, OutMessage } from "@replikit/core/typings"
 import { fromText, MessageBuilder } from "@replikit/messages"
 import {
   ControllerBase,
@@ -43,11 +43,11 @@ export class GameController extends ControllerBase {
 
   /**
    * Creates new game
-   * @param channelId
+   * @param channel
    * @param account
    */
-  public create(channelId: Identifier, account: AccountInfo): OutMessage {
-    const game = this._gameRepository.get(channelId)
+  public create(channel: ChannelInfo, account: AccountInfo): OutMessage {
+    const game = this._gameRepository.get(channel.id)
 
     if (game && moment().diff(game.createdAt, "seconds") < config.uno.createWaitTime)
       return fromText(this._locale.timeHasNotPassed(config.uno.createWaitTime))
@@ -56,12 +56,11 @@ export class GameController extends ControllerBase {
       return fromText(this._locale.gameAlreadyStarted)
 
     const playerRepository = new PlayerRepository()
-    this._gameRepository.remove(channelId)
+    this._gameRepository.remove(channel.id)
 
     this._gameRepository.add({
-      id: channelId,
-      ownerId: account.id,
-      score: 0,
+      id: channel.id, channel,
+      owner: account, score: 0,
       players: playerRepository,
       modes: [defaultMode],
       deck: new DeckManager(),
@@ -70,7 +69,7 @@ export class GameController extends ControllerBase {
     })
 
     this._eventManager.publish("game:created", {
-      game: this._gameRepository.get(channelId)!,
+      game: this._gameRepository.get(channel.id)!,
       player: account
     })
 
@@ -79,19 +78,19 @@ export class GameController extends ControllerBase {
 
   /**
    * Closes the game
-   * @param channelId
+   * @param channel
    * @param account
    */
-  public close(channelId: Identifier, account: AccountInfo): OutMessage {
-    const game = this._gameRepository.get(channelId)
+  public close(channel: ChannelInfo, account: AccountInfo): OutMessage {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
 
-    if (game.ownerId !== account.id)
+    if (game.owner.id !== account.id)
       return fromText(this._locale.gameNotOwner)
 
-    this._gameRepository.remove(channelId)
+    this._gameRepository.remove(channel.id)
     this._eventManager.publish("game:closed", {
       game, player: account
     })
@@ -101,16 +100,16 @@ export class GameController extends ControllerBase {
 
   /**
    * Starts the game
-   * @param channelId
+   * @param channel
    * @param account
    */
-  public async start(channelId: Identifier, account: AccountInfo): Promise<OutMessage> {
-    const game = this._gameRepository.get(channelId)
+  public async start(channel: ChannelInfo, account: AccountInfo): Promise<OutMessage> {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
 
-    if (game.ownerId !== account.id)
+    if (game.owner.id !== account.id)
       return fromText(this._locale.gameNotOwner)
 
     if (game.started)
@@ -144,11 +143,11 @@ export class GameController extends ControllerBase {
 
   /**
    * Ends the game
-   * @param channelId
+   * @param channel
    * @param player
    */
-  public end(channelId: Identifier, player: PlayerInfo): OutMessage {
-    const game = this._gameRepository.get(channelId)
+  public end(channel: ChannelInfo, player: PlayerInfo): OutMessage {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
@@ -158,7 +157,7 @@ export class GameController extends ControllerBase {
 
     game.started = false
 
-    this._gameRepository.remove(channelId)
+    this._gameRepository.remove(channel.id)
     this._eventManager.publish("game:ended", { game, player })
 
     return fromText(this._locale.gameEnded)

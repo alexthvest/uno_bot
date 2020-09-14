@@ -1,7 +1,6 @@
-import { config, resolveController } from "@replikit/core"
-import { AccountInfo, Identifier, OutMessage } from "@replikit/core/typings"
+import { config } from "@replikit/core"
+import { AccountInfo, ChannelInfo, Identifier, OutMessage } from "@replikit/core/typings"
 import { fromText } from "@replikit/messages"
-import { TelegramController } from "@replikit/telegram"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
 import { ControllerBase, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
@@ -12,8 +11,6 @@ export class PlayerController extends ControllerBase {
   private readonly _eventManager: EventManager
   private readonly _modeManager: ModeManager
   private readonly _locale: DefaultLocale
-
-  private readonly _controller: TelegramController
 
   /**
    *
@@ -36,11 +33,11 @@ export class PlayerController extends ControllerBase {
 
   /**
    * Adds player to the game
-   * @param channelId
+   * @param channel
    * @param account
    */
-  public join(channelId: Identifier, account: AccountInfo): OutMessage {
-    const game = this._gameRepository.get(channelId)
+  public join(channel: ChannelInfo, account: AccountInfo): OutMessage {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
@@ -65,11 +62,11 @@ export class PlayerController extends ControllerBase {
 
   /**
    * Removes user from the game
-   * @param channelId
+   * @param channel
    * @param accountId
    */
-  public async leave(channelId: Identifier, accountId: Identifier): Promise<OutMessage> {
-    const game = this._gameRepository.get(channelId)
+  public async leave(channel: ChannelInfo, accountId: Identifier): Promise<OutMessage> {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
@@ -103,7 +100,7 @@ export class PlayerController extends ControllerBase {
     }
 
     if (game.players.length < config.uno.minPlayers) {
-      const wonMessage = this.won(game.id, game.players.all[0])
+      const wonMessage = this.won(game.channel, game.players.all[0])
       this._gameRepository.remove(game.id)
 
       return this.message(game.id, wonMessage)
@@ -117,17 +114,17 @@ export class PlayerController extends ControllerBase {
 
   /**
    * Kicks player from game
-   * @param channelId
+   * @param channel
    * @param account
    * @param target
    */
-  public async kick(channelId: Identifier, account: AccountInfo, target: AccountInfo | undefined): Promise<OutMessage> {
-    const game = this._gameRepository.get(channelId)
+  public async kick(channel: ChannelInfo, account: AccountInfo, target: AccountInfo | undefined): Promise<OutMessage> {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
 
-    if (game.ownerId !== account.id)
+    if (game.owner.id !== account.id)
       return fromText(this._locale.gameNotOwner)
 
     if (target?.id === undefined)
@@ -136,7 +133,7 @@ export class PlayerController extends ControllerBase {
     if (!game.players.contains(target.id))
       return fromText(this._locale.playerNotInGame)
 
-    await this.leave(channelId, target.id)
+    await this.leave(channel, target.id)
 
     this._eventManager.publish("player:kicked", {
       game, player: game.players.get(target.id)!
@@ -180,11 +177,11 @@ export class PlayerController extends ControllerBase {
 
   /**
    *
-   * @param channelId
+   * @param channel
    * @param player
    */
-  public won(channelId: Identifier, player: PlayerInfo): OutMessage {
-    const game = this._gameRepository.get(channelId)
+  public won(channel: ChannelInfo, player: PlayerInfo): OutMessage {
+    const game = this._gameRepository.get(channel.id)
 
     if (game === undefined)
       return fromText(this._locale.gameNotFound)
@@ -213,8 +210,8 @@ export class PlayerController extends ControllerBase {
     if (game.turns.turn && player.cards.length === 0) {
       const gameController = new GameController(this._gameRepository, this._eventManager, this._modeManager, this._locale)
 
-      const wonMessage = this.won(game.id, player)
-      const endMessage = gameController.end(game.id, player)
+      const wonMessage = this.won(game.channel, player)
+      const endMessage = gameController.end(game.channel, player)
 
       await this.message(game.id, wonMessage)
       return this.message(game.id, endMessage)

@@ -3,5 +3,5 @@ import { eventManager, gameRepository, modeManager, GameController, DefaultLocal
 
 command("close").handler(context => {
   const controller = new GameController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.close(context.channel.id, context.account)
+  return controller.close(context.channel, context.account)
 }).register()

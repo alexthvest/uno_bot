@@ -3,5 +3,5 @@ import { eventManager, gameRepository, modeManager, GameController, DefaultLocal
 
 command("create").handler(context => {
   const controller = new GameController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.create(context.channel.id, context.account)
+  return controller.create(context.channel, context.account)
 }).register()

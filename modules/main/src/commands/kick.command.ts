@@ -3,5 +3,5 @@ import { DefaultLocale, eventManager, gameRepository, modeManager, PlayerControl
 
 command("kick").handler(context => {
   const controller = new PlayerController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.kick(context.channel.id, context.account, context.message.reply?.account)
+  return controller.kick(context.channel, context.account, context.message.reply?.account)
 }).register()
