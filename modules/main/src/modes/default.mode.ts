@@ -1,4 +1,4 @@
-import { fromText } from "@replikit/messages"
+import { fromText, MessageBuilder } from "@replikit/messages"
 import { CardDefaultType, CardOptionType, CardSpecialType } from "@uno_bot/cards"
 import { Mode } from "@uno_bot/main/typings"
 
@@ -10,7 +10,15 @@ export const defaultMode: Mode = {
       playable: context => context.player.drew || false,
       handle: context => {
         const nextPlayer = context.game.turns.next()
-        return context.message(fromText(context.locale.nextTurn(nextPlayer)))
+        const nextPlayerMessage = new MessageBuilder()
+          .addText(context.locale.nextTurn(nextPlayer))
+          .addButton({
+            text: context.locale.buttonChooseCard,
+            switchInline: { current: true, username: "" }
+          })
+          .build()
+
+        return context.message(nextPlayerMessage)
       }
     },
     {
@@ -56,8 +64,15 @@ export const defaultMode: Mode = {
     {
       card: CardSpecialType.DrawFour,
       handle: async context => {
-        await context.message(fromText(context.locale.chooseColor))
+        const chooseColorMessage = new MessageBuilder()
+          .addText(context.locale.chooseColor)
+          .addButton({
+            text: context.locale.buttonChooseColor,
+            switchInline: { current: true, username: "" }
+          })
+          .build()
 
+        await context.message(chooseColorMessage)
         context.card.color = await context.inlineColors()
 
         const player = context.game.turns.next()
@@ -72,7 +87,15 @@ export const defaultMode: Mode = {
     {
       card: CardSpecialType.Color,
       handle: async context => {
-        await context.message(fromText(context.locale.chooseColor))
+        const chooseColorMessage = new MessageBuilder()
+          .addText(context.locale.chooseColor)
+          .addButton({
+            text: context.locale.buttonChooseColor,
+            switchInline: { current: true, username: "" }
+          })
+          .build()
+
+        await context.message(chooseColorMessage)
         context.card.color = await context.inlineColors()
       }
     }

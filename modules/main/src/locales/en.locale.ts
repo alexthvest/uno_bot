@@ -46,6 +46,8 @@ locales.add("en", DefaultLocale, {
   noDescription: "No description",
   yourCardsTitle: "Your cards",
   chooseColor: "Please choose a color",
+  buttonChooseCard: "Choose card",
+  buttonChooseColor: "Choose color",
 
   /**
    * Other locales

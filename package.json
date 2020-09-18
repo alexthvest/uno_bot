@@ -11,18 +11,18 @@
         "modules/*"
     ],
     "dependencies": {
-        "@replikit/core": "^0.18.2",
-        "@replikit/telegram": "^0.18.2",
-        "@replikit/commands": "^0.18.2",
-        "@replikit/i18n": "^0.18.2",
-        "@replikit/messages": "^0.18.2",
-        "@replikit/router": "^0.18.2",
-        "uuid": "^8.3.0",
-        "moment": "^2.27.0"
+        "@replikit/commands": "^0.19.0",
+        "@replikit/core": "^0.19.0",
+        "@replikit/i18n": "^0.19.0",
+        "@replikit/messages": "^0.19.0",
+        "@replikit/router": "^0.19.0",
+        "@replikit/telegram": "^0.19.0",
+        "moment": "^2.28.0",
+        "uuid": "^8.3.0"
     },
     "devDependencies": {
-        "@types/uuid": "^8.3.0",
-        "@types/node": "^14.0.27",
-        "replikit": "^0.18.2"
+        "@replikit/cli": "^0.19.0",
+        "@types/node": "^14.11.1",
+        "@types/uuid": "^8.3.0"
     }
 }

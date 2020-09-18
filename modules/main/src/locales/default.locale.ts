@@ -40,6 +40,8 @@ export class DefaultLocale {
   public noDescription: string
   public yourCardsTitle: string
   public chooseColor: string
+  public buttonChooseCard: string
+  public buttonChooseColor: string
 
   /**
    * Other locales

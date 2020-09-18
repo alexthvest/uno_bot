@@ -1,6 +1,6 @@
 import { config } from "@replikit/core"
 import { AccountInfo, ChannelInfo, Identifier, OutMessage } from "@replikit/core/typings"
-import { fromText } from "@replikit/messages"
+import { fromText, MessageBuilder } from "@replikit/messages"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
 import { ControllerBase, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
@@ -174,7 +174,13 @@ export class PlayerController extends ControllerBase {
     const nextPlayer = game.turns.next()
     this._eventManager.publish("player:turn", { game, player: nextPlayer })
 
-    return fromText(this._locale.nextTurn(nextPlayer))
+    return new MessageBuilder()
+      .addText(this._locale.nextTurn(nextPlayer))
+      .addButton({
+        text: this._locale.buttonChooseCard,
+        switchInline: { current: true, username: "" }
+      })
+      .build()
   }
 
   /**

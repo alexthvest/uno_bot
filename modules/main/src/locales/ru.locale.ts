@@ -48,6 +48,8 @@ locales.add("ru", DefaultLocale, {
   noDescription: "Нет описания",
   yourCardsTitle: "Ваши карты",
   chooseColor: "Пожалуйста, выберите цвет",
+  buttonChooseCard: "Выбрать карту",
+  buttonChooseColor: "Выбрать цвет",
 
   /**
    * Other locales

@@ -141,6 +141,10 @@ export class GameController extends ControllerBase {
     return new MessageBuilder()
       .addLine(this._locale.gameStarted)
       .addLine(this._locale.nextTurn(game.turns.turn!))
+      .addButton({
+        text: this._locale.buttonChooseCard,
+        switchInline: { current: true, username: "" }
+      })
       .addAttachment({
         id: card.stickerId,
         type: AttachmentType.Sticker,
