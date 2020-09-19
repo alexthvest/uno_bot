@@ -3,23 +3,23 @@ import { locales } from "@replikit/i18n"
 import { isOptionCardType, isSpecialCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
 import { DefaultLocale, UnoInlineManager } from "@uno_bot/main"
-import { GameInfo, Mode, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
+import { GameInfo, ModeInfo, ModeRuleContext, PlayerInfo } from "@uno_bot/main/typings"
 
 export class ModeManager {
-  private readonly _modes: Mode[]
+  private readonly _modes: ModeInfo[]
   private readonly _inlineManager: UnoInlineManager
 
   /**
    * Returns all registered modes
    */
-  public get modes(): Mode[] { return this._modes }
+  public get modes(): ModeInfo[] { return this._modes }
 
   /**
    *
    * @param inlineManager
    * @param modes
    */
-  public constructor(inlineManager: UnoInlineManager, ...modes: Mode[]) {
+  public constructor(inlineManager: UnoInlineManager, ...modes: ModeInfo[]) {
     this._inlineManager = inlineManager
     this._modes = modes
   }

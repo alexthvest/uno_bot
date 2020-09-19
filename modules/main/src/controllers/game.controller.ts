@@ -3,19 +3,15 @@ import { AccountInfo, ChannelInfo, OutMessage } from "@replikit/core/typings"
 import { fromAttachment, fromText, MessageBuilder } from "@replikit/messages"
 import {
   ControllerBase,
-  DeckManager,
   DefaultLocale,
-  defaultMode,
   EventManager,
   ModeManager,
   PlayerController,
-  PlayerRepository,
-  RepositoryBase,
-  TurnManager
+  RepositoryBase
 } from "@uno_bot/main"
 import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 import moment from "moment"
-import { ModeRepository } from "../repositories/mode.repository"
+import { createGame } from "../utils/game.utils"
 
 export class GameController extends ControllerBase {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -48,7 +44,7 @@ export class GameController extends ControllerBase {
    * @param account
    */
   public create(channel: ChannelInfo, account: AccountInfo): OutMessage {
-    const game = this._gameRepository.get(channel.id)
+    let game = this._gameRepository.get(channel.id)
 
     if (game && moment().diff(game.createdAt, "seconds") < config.uno.createWaitTime)
       return fromText(this._locale.timeHasNotPassed(config.uno.createWaitTime))
@@ -56,27 +52,13 @@ export class GameController extends ControllerBase {
     if (game && game.started)
       return fromText(this._locale.gameAlreadyStarted)
 
-    const playerRepository = new PlayerRepository()
-    const modeRepository = new ModeRepository(defaultMode)
-
-    const deckManager = new DeckManager()
-    const turnManager = new TurnManager(playerRepository)
+    game = createGame(channel, account)
 
     this._gameRepository.remove(channel.id)
-    this._gameRepository.add({
-      id: channel.id,
-      channel,
-      owner: account,
-      score: 0,
-      players: playerRepository,
-      modes: modeRepository,
-      deck: deckManager,
-      turns: turnManager,
-      createdAt: moment()
-    })
+    this._gameRepository.add(game)
 
     this._eventManager.publish("game:created", {
-      game: this._gameRepository.get(channel.id)!,
+      game,
       player: account
     })
 

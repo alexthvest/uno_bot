@@ -5,7 +5,7 @@ import { InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { DefaultLocale, EventManager } from "@uno_bot/main"
 import { GameInfo, PlayerInfo } from "@uno_bot/main/typings"
 
-export interface Mode extends HasId {
+export interface ModeInfo extends HasId {
   description?: string
   rules: ModeRule[]
 

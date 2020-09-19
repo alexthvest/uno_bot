@@ -1,7 +1,7 @@
 import { AccountInfo, ChannelInfo, HasId } from "@replikit/core/typings"
 import { Card } from "@uno_bot/cards/typings"
 import { DeckManager, RepositoryBase, TurnManager } from "@uno_bot/main"
-import { Mode, PlayerInfo } from "@uno_bot/main/typings"
+import { ModeInfo, PlayerInfo } from "@uno_bot/main/typings"
 import { Moment } from "moment"
 
 export interface GameInfo extends HasId {
@@ -12,7 +12,7 @@ export interface GameInfo extends HasId {
   score: number
 
   players: RepositoryBase<PlayerInfo>
-  modes: RepositoryBase<Mode>
+  modes: RepositoryBase<ModeInfo>
 
   deck: DeckManager
   turns: TurnManager

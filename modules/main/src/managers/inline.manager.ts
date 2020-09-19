@@ -6,7 +6,7 @@ import { Card } from "@uno_bot/cards/typings"
 import { InlineManager } from "@uno_bot/inline"
 import { InlineQueryDataResult } from "@uno_bot/inline/typings"
 import { DefaultLocale, ModeManager } from "@uno_bot/main"
-import { GameInfo, Mode, PlayerInfo } from "@uno_bot/main/typings"
+import { GameInfo, ModeInfo, PlayerInfo } from "@uno_bot/main/typings"
 
 export class UnoInlineManager extends InlineManager {
   /**
@@ -109,7 +109,7 @@ export class UnoInlineManager extends InlineManager {
    * @param game
    * @param modes
    */
-  public inlineModesWithContext(context: InlineQueryReceivedContext, game: GameInfo, modes: Mode[]): Promise<Mode> {
+  public inlineModesWithContext(context: InlineQueryReceivedContext, game: GameInfo, modes: ModeInfo[]): Promise<ModeInfo> {
     const locale = context.getLocale(DefaultLocale)
     return this.inlineWithContext(context, modes.map(mode => {
       const name = mode.id.toString().capitalize()

@@ -16,13 +16,18 @@ export interface GameContextBase {
   player: AccountInfo
 }
 
-export interface GameCreatedContext extends GameContextBase {}
+export interface GameCreatedContext extends GameContextBase {
 
-export interface GameClosedContext extends GameContextBase {}
+}
 
-export interface GameEndedContext extends GameContextBase {}
+export interface GameClosedContext extends GameContextBase {
+
+}
+
+export interface GameEndedContext extends GameContextBase {
+
+}
 
 export interface GameStartedContext extends GameContextBase {
   card: Card
 }
-

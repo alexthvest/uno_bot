@@ -1,8 +1,8 @@
 import { fromText, MessageBuilder } from "@replikit/messages"
 import { CardDefaultType, CardOptionType, CardSpecialType } from "@uno_bot/cards"
-import { Mode } from "@uno_bot/main/typings"
+import { ModeInfo } from "@uno_bot/main/typings"
 
-export const defaultMode: Mode = {
+export const defaultMode: ModeInfo = {
   id: "default",
   rules: [
     {
