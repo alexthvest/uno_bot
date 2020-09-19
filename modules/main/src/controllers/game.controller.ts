@@ -1,6 +1,6 @@
 import { AttachmentType, config } from "@replikit/core"
 import { AccountInfo, ChannelInfo, OutMessage } from "@replikit/core/typings"
-import { fromText, MessageBuilder } from "@replikit/messages"
+import { fromAttachment, fromText, MessageBuilder } from "@replikit/messages"
 import {
   ControllerBase,
   DeckManager,
@@ -138,6 +138,12 @@ export class GameController extends ControllerBase {
       game, card, player: account
     })
 
+    await this.message(game.id, fromAttachment({
+      id: card.stickerId,
+      type: AttachmentType.Sticker,
+      controllerName: "tg"
+    }))
+
     return new MessageBuilder()
       .addLine(this._locale.gameStarted)
       .addLine(this._locale.nextTurn(game.turns.turn!))
@@ -145,11 +151,7 @@ export class GameController extends ControllerBase {
         text: this._locale.buttonChooseCard,
         switchInline: { current: true, username: "" }
       })
-      .addAttachment({
-        id: card.stickerId,
-        type: AttachmentType.Sticker,
-        controllerName: "tg"
-      }).build()
+      .build()
   }
 
   /**

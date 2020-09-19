@@ -60,10 +60,14 @@ export class DeckManager {
    * Draws first card
    */
   public drawFirst(): Card {
-    let card: Card
+    let card: Card | undefined
 
-    do { card = this.draw() }
-    while (isSpecialCardType(card.type))
+    while (card === undefined || isSpecialCardType(card.type)) {
+      card = this.draw()
+
+      if (isSpecialCardType(card.type))
+        this.discard(card)
+    }
 
     return card
   }
