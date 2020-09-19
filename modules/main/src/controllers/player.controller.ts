@@ -4,7 +4,7 @@ import { fromText, MessageBuilder } from "@replikit/messages"
 import { getCardScore, isOptionCardType } from "@uno_bot/cards"
 import { Card } from "@uno_bot/cards/typings"
 import { ControllerBase, DefaultLocale, EventManager, GameController, ModeManager, RepositoryBase } from "@uno_bot/main"
-import { GameInfo, PlayerCardPlayedContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
+import { GameInfo, PlayerCardContext, PlayerInfo, PlayerLeftContext } from "@uno_bot/main/typings"
 
 export class PlayerController extends ControllerBase {
   private readonly _gameRepository: RepositoryBase<GameInfo>
@@ -166,8 +166,8 @@ export class PlayerController extends ControllerBase {
 
     await this._modeManager.play(game, player, card)
 
-    this._eventManager.subscribeOnce("player:card:played", this.onCardPlayed.bind(this))
-    this._eventManager.publish("player:card:played", { game, player, card })
+    this._eventManager.subscribeOnce("player:card", this.onCardPlayed.bind(this))
+    this._eventManager.publish("player:card", { game, player, card })
 
     if (!game.started) return
 
@@ -212,7 +212,7 @@ export class PlayerController extends ControllerBase {
    * Handles card played event
    * @param context
    */
-  private async onCardPlayed(context: PlayerCardPlayedContext): Promise<unknown> {
+  private async onCardPlayed(context: PlayerCardContext): Promise<unknown> {
     const { game, player } = context
 
     if (game.turns.turn && player.cards.length === 0) {
