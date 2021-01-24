@@ -31,27 +31,28 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@replikit/chalk@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/chalk/-/chalk-0.19.0.tgz#97e2d2db4c805b7ed05766d1669f46aaa2c9b5ec"
-  integrity sha512-59MLzwRHgJvWUno4IntBFKgIwtn49+k5M/jl40miAf6My7B4cPP08vY0GufdFU42j3plAnyVdy39CXiMrbHUYQ==
+"@replikit/chalk@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/chalk/-/chalk-0.23.0.tgz#ce7afb7f098f77401006b790171bc0b04b492e9d"
+  integrity sha512-3te03Mbfk61Je3B4qZzWEvhsOXbFsLIPOOI2/kVWA3/O4WRHJegcxXeqb0QC5Qqi2oNNdBxnDSAhqmxGl6z60w==
   dependencies:
-    "@replikit/core" "^0.19.0"
+    "@replikit/core" "^0.23.0"
     chalk "^4.0.0"
 
-"@replikit/cli@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/cli/-/cli-0.19.0.tgz#d69d6ee9cd9597fd1c3eaa8877aca269d0eb4587"
-  integrity sha512-jnBAkUIyukmBa/v/3liDkIR9EDu+y+ifxvyhrV+NqrwAyQBmxwbezvNC7x8G88Rm73MdVw2duVuojLQ1IhPFOw==
+"@replikit/cli@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/cli/-/cli-0.23.0.tgz#405d7f2a11cab5f79dcdde0c61a8d394a92d7b1e"
+  integrity sha512-2WB12eOftrO1VlgT7Jnpr2CfswvotLKcpGWfs7I/CZ82RTuhlT4NSqBOqSISGRtQ/X+Eowy8m5cZ+PM5T3KNKQ==
   dependencies:
-    "@replikit/chalk" "^0.19.0"
-    "@replikit/core" "^0.19.0"
+    "@replikit/chalk" "^0.23.0"
+    "@replikit/core" "^0.23.0"
     commander "^6.0.0"
     dotenv "^8.2.0"
     execa "^4.0.0"
     fs-extra "^9.0.0"
     inquirer "^7.3.3"
     native-addon-loader "^2.0.1"
+    parse-git-config "^3.0.0"
     require-from-string "^2.0.2"
     ts-loader "^8.0.3"
     ts-morph "^8.1.0"
@@ -63,49 +64,49 @@
     webpack-virtual-modules "^0.3.1"
     webpackbar "^4.0.0"
 
-"@replikit/commands@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/commands/-/commands-0.19.0.tgz#aa96f13d59cc59eba712ff9bef98b918e8ee96c5"
-  integrity sha512-OdpkL8TAnP+Ux4yxoBoCvSkiY1yOqTywfGmRDnltznTOlyBh2Cpd8g5JDRjaHlariEbG245AfGxNcp7n0wyjxQ==
+"@replikit/commands@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/commands/-/commands-0.23.0.tgz#132d60e79763025d0ff60461849e2a8a09b2279c"
+  integrity sha512-ARWmPz7jkvm67EYC+hNwW5NRgqGQgAlBuA6Q4kRZ3qXgQQQUX6smrzaVYP7Bg9tzyyS0hR7cXu3543y6RkSXFQ==
   dependencies:
-    "@replikit/core" "^0.19.0"
-    "@replikit/i18n" "^0.19.0"
-    "@replikit/router" "^0.19.0"
+    "@replikit/core" "^0.23.0"
+    "@replikit/i18n" "^0.23.0"
+    "@replikit/router" "^0.23.0"
 
-"@replikit/core@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/core/-/core-0.19.0.tgz#2217bbd49d762d5ca7615bddc4a57c223b59ae85"
-  integrity sha512-TGkFPIF+UOuuFLuo43HtE6bdS5K8xHgr9xoZibIm5ZSywXc/4Gsym0vqYwU879NuHY5kU6361lGljmjpnRXlCA==
+"@replikit/core@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/core/-/core-0.23.0.tgz#6e29486414cb7c606df3bd9d4b985539e8de2895"
+  integrity sha512-TSke2tdPI8KByrbnf7fBd5rEfjcOkQ2qQon3jbDiBBqYl9TXREA5HkxpECaMjcgzu4gmMfK8Ck8ClMcv2mS8Dg==
 
-"@replikit/i18n@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/i18n/-/i18n-0.19.0.tgz#8226a8fe077c06d65a21209777d4626946b70bbb"
-  integrity sha512-hHvtRJZCD7T3Zc+U2lKGhTjhksPNWKxdmJZHE12qswJ3s9MtjgzJtpJAsaxVrXI0MinvMYY0J8ADE+mX8FIcWQ==
+"@replikit/i18n@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/i18n/-/i18n-0.23.0.tgz#5e6fe351ef86949f49d44f155d4a2c0f7d0c7ced"
+  integrity sha512-8bcMoSFjYwJ1bbsne/xcOnyARzqnuHC5YiQpt5yEtCjGY8j/Q/kGLqbDyeP9kkHCsKqJv1YBR64HAc6K35waRA==
   dependencies:
-    "@replikit/core" "^0.19.0"
-    "@replikit/router" "^0.19.0"
+    "@replikit/core" "^0.23.0"
+    "@replikit/router" "^0.23.0"
 
-"@replikit/messages@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/messages/-/messages-0.19.0.tgz#fa8d25989d5400ed24c2bf4ef7f81e4d71b64485"
-  integrity sha512-PFXU7p0mCuPpRgud5qcvpL4pbjolOpy/uAGb9zj4N1Dz9A0/lcV5E0DPaPagahX8CV5ba1niP8SCRlCoANUdKg==
+"@replikit/messages@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/messages/-/messages-0.23.0.tgz#76000d41f83afbcadc9ea516ead3479525453ec6"
+  integrity sha512-lNhm3Z8ZhktVV5x2Ygy07ed0YOYFlI6gXl9AFR17QFq13Kp196F2XVLYYtpIqHFZZoYkWTFPWzgM7KQA91Qo6A==
   dependencies:
-    "@replikit/core" "^0.19.0"
+    "@replikit/core" "^0.23.0"
 
-"@replikit/router@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/router/-/router-0.19.0.tgz#3f2cffd9d5384fba35513682246e86445bc966da"
-  integrity sha512-y4vkMTFdRvpTK6co0SlPuRsORfpPj3e4ODYJjn6Kf01+tc3Szrc0Gn3hpYx9ZCkYee5/L7qRIBQ6cFs331xqVA==
+"@replikit/router@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/router/-/router-0.23.0.tgz#6f04189228b25db6a0e30a5c08964a6e77981f7c"
+  integrity sha512-I2XW4Qjbmg22ERN8owyyHCZsqVovbqphLQ3xZvrZPs0hZgLBg5NUCFqTgzHGJtMgtOrfYT947lvJ8UA5G4hkiQ==
   dependencies:
-    "@replikit/core" "^0.19.0"
-    "@replikit/messages" "^0.19.0"
+    "@replikit/core" "^0.23.0"
+    "@replikit/messages" "^0.23.0"
 
-"@replikit/telegram@^0.19.0":
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/@replikit/telegram/-/telegram-0.19.0.tgz#e6c0873e9f0c8541bb7590541ee4241af8ac8418"
-  integrity sha512-1xwTxorojO81diFteqg8HpOr4Lhi6b7ODVn8izJwMQXAlpbPGs+jZPuI6Oodp1BH0ERF1uhLRYfUfjtzq1VAVg==
+"@replikit/telegram@^0.23.0":
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/@replikit/telegram/-/telegram-0.23.0.tgz#f42af34fd048483e20105999c866251401096c10"
+  integrity sha512-SxU9XN1Z/K+1R7Vs0rrKZPRnxCrx9MWNsoNAyDekopLvG2Oa1oNqYiCOJTbi+EI2GCcgTdC5lmOkktdSh/wjzQ==
   dependencies:
-    "@replikit/core" "^0.19.0"
+    "@replikit/core" "^0.23.0"
     telegraf "^3.38.0"
 
 "@ts-morph/common@~0.6.0":
@@ -1419,6 +1420,11 @@ get-value@^2.0.3, get-value@^2.0.6:
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
   integrity sha1-3BXKHGcjh8p2vTesCjlbogQqLCg=
 
+git-config-path@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/git-config-path/-/git-config-path-2.0.0.tgz#62633d61af63af4405a5024efd325762f58a181b"
+  integrity sha512-qc8h1KIQbJpp+241id3GuAtkdyJ+IK+LIVtkiFTRKRrmddDzs3SI9CvP1QYmWBFvm1I/PWRwj//of8bgAc0ltA==
+
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"
@@ -1589,6 +1595,11 @@ inherits@2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
   integrity sha1-Yzwsg+PaQqUC9SRmAiSA9CCCYd4=
+
+ini@^1.3.5:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
+  integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
 inquirer@^7.3.3:
   version "7.3.3"
@@ -2330,6 +2341,14 @@ parse-asn1@^5.0.0, parse-asn1@^5.1.5:
     evp_bytestokey "^1.0.0"
     pbkdf2 "^3.0.3"
     safe-buffer "^5.1.1"
+
+parse-git-config@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/parse-git-config/-/parse-git-config-3.0.0.tgz#4a2de08c7b74a2555efa5ae94d40cd44302a6132"
+  integrity sha512-wXoQGL1D+2COYWCD35/xbiKma1Z15xvZL8cI25wvxzled58V51SJM04Urt/uznS900iQor7QO04SgdfT/XlbuA==
+  dependencies:
+    git-config-path "^2.0.0"
+    ini "^1.3.5"
 
 parse-json@^2.2.0:
   version "2.2.0"

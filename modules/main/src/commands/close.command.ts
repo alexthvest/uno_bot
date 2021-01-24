@@ -1,7 +1,6 @@
 import { command } from "@replikit/commands"
-import { eventManager, gameRepository, modeManager, GameController, DefaultLocale } from "@uno_bot/main"
+import { DefaultLocale, closeGameCase } from "@uno_bot/main"
 
-command("close").handler(context => {
-  const controller = new GameController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.close(context.channel, context.account)
-}).register()
+command("close")
+  .handler(context => closeGameCase(context.channel, context.account, context.getLocale(DefaultLocale)))
+  .register()

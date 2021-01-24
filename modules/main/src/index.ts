@@ -3,6 +3,7 @@
  */
 export * from "./utils/array.utils"
 export * from "./utils/display.utils"
+export * from "./utils/game.utils"
 
 export * from "./locales/default.locale"
 
@@ -46,11 +47,10 @@ export * from "./repositories/player.repository"
 export * from "./repositories/mode.repository"
 
 /**
- * Controllers
+ * Cases
  */
-export * from "./controllers/base.controller"
-export * from "./controllers/game.controller"
-export * from "./controllers/player.controller"
+export * from "./cases/game"
+export * from "./cases/player"
 
 /**
  * Modes

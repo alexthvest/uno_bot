@@ -1,28 +1,28 @@
 {
-    "name": "uno_bot",
-    "version": "0.0.0",
-    "license": "MIT",
-    "private": true,
-    "scripts": {
-        "dev": "replikit dev",
-        "build": "replikit build"
-    },
-    "workspaces": [
-        "modules/*"
-    ],
-    "dependencies": {
-        "@replikit/commands": "^0.19.0",
-        "@replikit/core": "^0.19.0",
-        "@replikit/i18n": "^0.19.0",
-        "@replikit/messages": "^0.19.0",
-        "@replikit/router": "^0.19.0",
-        "@replikit/telegram": "^0.19.0",
-        "moment": "^2.28.0",
-        "uuid": "^8.3.0"
-    },
-    "devDependencies": {
-        "@replikit/cli": "^0.19.0",
-        "@types/node": "^14.11.1",
-        "@types/uuid": "^8.3.0"
-    }
+  "name": "uno_bot",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "replikit dev",
+    "build": "replikit build"
+  },
+  "workspaces": [
+    "modules/*"
+  ],
+  "dependencies": {
+    "@replikit/commands": "^0.23.0",
+    "@replikit/core": "^0.23.0",
+    "@replikit/i18n": "^0.23.0",
+    "@replikit/messages": "^0.23.0",
+    "@replikit/router": "^0.23.0",
+    "@replikit/telegram": "^0.23.0",
+    "moment": "^2.28.0",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "@replikit/cli": "^0.23.0",
+    "@types/node": "^14.11.1",
+    "@types/uuid": "^8.3.0"
+  }
 }

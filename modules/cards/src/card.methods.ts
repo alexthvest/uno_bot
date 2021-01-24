@@ -36,7 +36,9 @@ export function getCardScore(type: CardType): number {
  */
 export function getCardSticker(color: CardColor, type: CardType, grey: boolean = false): string {
   const stickers = CardStickers[color][type]
-  return stickers[(stickers.length > 1 && grey) ? 1 : 0]
+  const disabled = (stickers.length > 1 && grey) ? 1 : 0;
+
+  return stickers[disabled];
 }
 
 /**

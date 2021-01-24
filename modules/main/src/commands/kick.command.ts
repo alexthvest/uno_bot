@@ -1,7 +1,6 @@
 import { command } from "@replikit/commands"
-import { DefaultLocale, eventManager, gameRepository, modeManager, PlayerController } from "@uno_bot/main"
+import { DefaultLocale, kickPlayerCase } from "@uno_bot/main"
 
-command("kick").handler(context => {
-  const controller = new PlayerController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.kick(context.channel, context.account, context.message.reply?.account)
-}).register()
+command("kick")
+  .handler(context => kickPlayerCase(context.channel, context.account, context.message.reply?.account, context.getLocale(DefaultLocale)))
+  .register()

@@ -25,7 +25,7 @@ export class InlineManager {
    */
   public inline<T>(accountId: Identifier, options: InlineEventOptions<T>): Promise<T> {
     return new Promise(resolve => {
-      const event: InlineEvent<T> = { id: uuid(), accountId, results: options.results, once: options.once }
+      const event: InlineEvent<T> = { id: uuid(), accountId, ...options }
       this._storage.push(event)
 
       this._emitter.once(event.id, (data: T) => {
@@ -43,7 +43,7 @@ export class InlineManager {
    * @param results
    */
   public async inlineWithContext<T>(context: InlineQueryReceivedContext, results: InlineQueryDataResult<T>[]): Promise<T> {
-    const result = this.inline(context.account.id, { results, once: true })
+    const result = this.inline<T>(context.account.id, { results, once: true })
     await this.onInlineQueryReceived(context, () => { })
 
     return result
@@ -57,7 +57,10 @@ export class InlineManager {
    */
   private onInlineQueryReceived(context: InlineQueryReceivedContext, next: NextHandler): Promise<void> | unknown {
     const event = this._storage.find(event => event.accountId === context.account.id)
-    if (event === undefined) return next()
+
+    if (event === undefined) {
+      return next()
+    }
 
     if (event.once && event.showed) {
       const index = this._storage.indexOf(event)
@@ -78,7 +81,10 @@ export class InlineManager {
    */
   private onInlineQueryChosen(context: InlineQueryChosenContext, next: NextHandler): Promise<unknown> | unknown {
     const event = this._storage.find(event => event.accountId === context.account.id)
-    if (event === undefined) return next()
+
+    if (event === undefined) {
+      return next()
+    }
 
     const { data } = event.results.find(result => result.id === context.result.id)!
     return this._emitter.emit(event.id, data)

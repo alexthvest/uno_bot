@@ -13,7 +13,7 @@ declare module "@uno_bot/main/typings/events/index.events" {
 
 export interface GameContextBase {
   game: GameInfo
-  player: AccountInfo
+  account: AccountInfo
 }
 
 export interface GameCreatedContext extends GameContextBase {

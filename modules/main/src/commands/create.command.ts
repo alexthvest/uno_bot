@@ -1,7 +1,6 @@
 import { command } from "@replikit/commands"
-import { eventManager, gameRepository, modeManager, GameController, DefaultLocale } from "@uno_bot/main"
+import { DefaultLocale, createGameCase } from "@uno_bot/main"
 
-command("create").handler(context => {
-  const controller = new GameController(gameRepository, eventManager, modeManager, context.getLocale(DefaultLocale))
-  return controller.create(context.channel, context.account)
-}).register()
+command("create")
+  .handler(context => createGameCase(context.channel, context.account, context.getLocale(DefaultLocale)))
+  .register()
